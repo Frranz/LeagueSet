@@ -1,0 +1,193 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+
+html,
+body{
+	background: #3F51B5;
+	width: 100%;
+	height: 100%;
+}
+
+button{
+	width:30%;
+	margin-left:10%;
+	margin-right:10%;
+}
+
+#summonerInput {
+  background-color: rgba(0, 0, 0, 0.0);
+  border: none;
+  border-bottom: solid 2px #c9c9c9;
+  width: 100%;
+  font-size: 1.5rem;
+  color: #c9c9c9;
+  text-indent: 13%;
+  padding-bottom: 2%;
+}
+
+#summonerInput:focus{
+  outline: 0;
+}
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:    #c9c9c9;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    #c9c9c9;
+   opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    #c9c9c9;
+   opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:    #c9c9c9;
+}
+
+.wrapper{
+	width: 100%;
+	height: 30%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.search{
+	position: relative;
+}
+
+.fa-search{
+	position: absolute;
+	top: 10%;
+	left: 2%;
+	font-size: 1.3rem;
+	color: #c9c9c9;
+}
+
+.header{
+	padding-top:3%;
+	height:20%;
+}
+h1{
+	text-align:center;
+	color:white;
+	font-size:3em;
+	font-family:Helvetica;
+}
+.suggestions>*{
+	float:left;
+	width:8vw;
+	height:8vw;
+}
+/*DEFINE ANIMATIONS*/
+@keyframes champsIn{
+	from {
+        opacity: 0;
+        transform: translateY(-50%);
+  	}
+  	to {
+    	opacity: 1;
+    	transform: none;
+  	}
+}
+
+.champsIn{
+	animation:champsIn 1s ease 1;
+	animation-fill-mode:forwards
+}
+
+@keyframes champFocus{
+	from{
+			width:8vw;
+			height:8vw;
+	}
+	to{
+			margin-left:18vw;
+			width:12vw;
+			height:12vw;
+	}
+}
+
+.champFocus{
+	float:left;
+	animation:champFocus 1s ease 1;
+	animation-fill-mode:forwards
+}
+
+.itemset{
+	float:right;
+	background-image:url(images/itemset.png);
+	background-repeat:no-repeat;
+	background-size:contain;
+	margin-bottom:10vw;
+
+}
+
+.download{
+	width:44vw;
+	height:auto;
+	clear:left;
+	float:left;
+	margin-top:5vh;
+	margin-left:3vw;
+	background-color:#7986CB;
+}
+
+#where{
+	width:100%;
+	text-align:center;
+	clear:both;
+	float:none !important;
+	fonz-size:2em;
+	font-weight:600;
+}
+
+#downloadSet{
+	width:40%;
+	height:8vh;
+	margin-top:4vh;
+	margin-right:4.5%;
+	margin-left:4.5%;
+	float:left;
+	border-radius:2vh;
+	border:1px solid black;
+	background-color:darkgreen;
+}
+
+#itemSetString{
+	resize:none;
+	float:left;
+	width:40%;
+	height:20vh;
+	margin-bottom:1vh;
+	margin-top:4vh;
+	margin-right:4.5%;
+	margin-left:5%;
+	font-size:0.7em
+	
+}
+
+#copyText{
+	clear:right;
+	float:right;
+	margin-bottom:3vh;
+}
+
+.setOption{
+	font-size:2em;
+	font-weight:600;
+	width:50%;
+	float:left;
+	text-align:center;
+}
+
+.dLoadHow{
+	text-align:center;
+	width:40%;
+	float:left;
+	margin-left:5%;
+	margin-right:5%;
+	margin-top:1vh;
+}

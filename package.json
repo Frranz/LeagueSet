@@ -1,0 +1,16 @@
+{
+  "name": "itemsetgen",
+  "version": "0.0.1",
+  "description": "Generates LoL Itemsets based on Pro Players matches.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "BebDev,OrliDev",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.4",
+    "request": "^2.72.0"
+  }
+}
