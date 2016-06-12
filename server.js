@@ -60,9 +60,9 @@ app.post("/getData", function(req,res){
 app.post("/getSet",function(req,res){
 		createSet(req,res);
 })
-
-app.listen(8081, function () {
-  console.log('Listening on port 8081!');
+var port = Number(process.env.PORT||3000)
+app.listen(port, function () {
+  console.log('Listening on port things!');
 });
 
 // MANAGE API REQUESTS
