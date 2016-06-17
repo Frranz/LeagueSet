@@ -1,12 +1,17 @@
-var express = require('express');
-var path = require('path');
-var request = require('request');
-var bodyParser = require('body-parser');
-var async = require('async');
-var app = express();
+const express = require('express');
+const path = require('path');
+const request = require('request');
+const bodyParser = require('body-parser');
+const async = require('async');
+const rmdir = require('rimraf');
+const fs = require('fs');
+const archiver = require('archiver');
+const app = express();
 app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 app.use(express.static('static'));
+
+app.use('/download', express.static("temp/zip_here"));
 
 app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/index.html'));
@@ -60,9 +65,11 @@ app.post("/getData", function(req,res){
 app.post("/getSet",function(req,res){
 		createSet(req,res);
 })
+
+
 var port = Number(process.env.PORT||3000)
 app.listen(port, function () {
-  console.log('Listening on port things!');
+  console.log('Listening on port 8081!');
 });
 
 // MANAGE API REQUESTS
@@ -206,6 +213,7 @@ function createSet(req,res){
 				gamesAn +=1;
 				if (returnObj.response!=undefined){
 				if (returnObj.response.statusCode==200){
+					if (JSON.parse(returnObj.body).timeline!=undefined){
 					data = JSON.parse(returnObj.body);
 					console.log("gotgame"+data.matchId);
 					
@@ -298,7 +306,9 @@ function createSet(req,res){
 	                	}
 	                }
 		            //CHECK IF LAST RUN
-		            
+					}else{
+						console.log("no timeline");
+	                }
 					}else{
 						console.log("Error ev"+returnObj.response.statusCode);
 					}
@@ -404,10 +414,59 @@ function createSet(req,res){
 						)
 					}
 					console.log(JSON.stringify(itemSet));
-
-					res.send(itemSet);
+					createZip(itemSet,champion,function(num){
+						console.log(num)
+						res.send({itemset:itemSet,zipcode:num});
+					});
 				}
 			})
 		}
 	}
+}
+
+function createZip(itemSet,champion,next){
+	var dirName = Math.random()*100000000000000000;
+	fs.mkdir(__dirname+"/temp/zip_this/"+dirName,function(){
+		fs.mkdir(__dirname+"/temp/zip_this/"+dirName+"/League of Legends",function(){
+			fs.mkdir(__dirname+"/temp/zip_this/"+dirName+"/League of Legends/Config",function(){
+				fs.mkdir(__dirname+"/temp/zip_this/"+dirName+"/League of Legends/Config/Champions",function(){
+					fs.mkdir(__dirname+"/temp/zip_this/"+dirName+"/League of Legends/Config/Champions/"+champion,function(){
+						// DIRS CREATED - MAKE JSON
+						fs.writeFile(__dirname+"/temp/zip_this/"+dirName+"/League of Legends/Config/Champions/"+champion+"/Best Build ever.json",JSON.stringify(itemSet,null,"\t"),function(){
+							//ZIP IT
+								//DEFINE SHIT
+							var output = fs.createWriteStream('temp/zip_here/'+dirName+'.zip');
+							var archive = archiver('zip');
+
+							output.on('close', function () {
+							    console.log(dirName+" has been saved");
+							});
+
+							archive.on('error', function(err){
+							    throw err;
+							});
+
+							archive.pipe(output);
+							archive.bulk([
+							    { expand: true,cwd: "temp/zip_this/"+dirName,src:['**/*']}
+							]);
+							archive.finalize();
+							//DELETE IT
+							rmdir(__dirname+"/temp/zip_this/"+dirName,function(err){
+								console.log((err!=undefined)?dirName+"deleted":err);
+							})
+							next(dirName);
+							setTimeout(function(){
+								fs.unlink(__dirname+"/temp/zip_here/"+dirName+".zip",function(){
+									console.log(dirName+".zip deleted")
+								});
+							},60000)
+						})
+						
+					})
+				})
+			})
+		})
+	})
+	
 }

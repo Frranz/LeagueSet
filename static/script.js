@@ -60,8 +60,9 @@ $(document).ready(function(){
 						$(".suggested").not(this).remove();
 						$(this).addClass("champFocus");
 						
-						var champion = {
-							champion:$(this).attr("champion"),
+						var champion = $(this).attr("champion")
+						var sendThis = {
+							champion:champion,
 							matches:data.matches
 						}
 						
@@ -69,13 +70,14 @@ $(document).ready(function(){
 							type:"POST",
 							url:"/getSet",
 							dataType:"json",
-							data:champion,
+							data:sendThis,
 							complete:function(data){
 								if (data.status==200){
 									data = data.responseJSON;
-									console.log(data);
-									fillCanvas(data);
-									giveDload(data);
+									itemset = data.itemset;
+									console.log(itemset);
+									fillCanvas(itemset);
+									giveDload(itemset,data.zipcode);
 									var fac = 200; 
 									for (i=0;i<fac;i+=1){
 										setTimeout(function(){window.scrollBy(0,$(window).height()/fac)},5*i);
@@ -129,12 +131,14 @@ function sizeCanvas(){
 	$("#myCanvas").css("margin-right",$(window).width()/4 - $("#myCanvas").width()/2);
 }
 
-function giveDload(data){
+function giveDload(data,fileNum){
 	var howFast = 'Open the ZIP Archive with your extracter of choice. Then copy the League Of Legends folder in your Riot Games installation folder <b>NEXT TO</b> the existing LoL Folder.'
 	var howSlow = 'Click the copy button. Open Riot Games &rarr;LeagueOfLegends &rarr;config &rarr;Champions &rarr;*Champion* &rarr; Recommended. There you have to create a JSON file.(right click <b>&rarr;</b> new <b>&rarr;</b> textfile <b>&rarr;</b> paste the copied string and save as something.json).'
 	var content = '<p class="setOption" id="dLoad">do it fast</p><p class="setOption" id="copy">do it pussy</p><button id="downloadSet">Download</button><textarea readonly wrap="off" id="itemSetString">'+JSON.stringify(data,null,"\t")+'</textarea><button id="copyText">Copy</button><p id="where">Where should I put these things</p><p class="dLoadHow"style="clear:left">'+howFast+'</p><p class="dLoadHow">'+howSlow+'</p>'
 	$("#set").append('<div class="download">'+content+'</div>');
-	
+	$("#downloadSet").on('click',function(){
+		window.location.href="/download/"+fileNum+".zip";
+	})
 	
 	
 	
@@ -143,7 +147,7 @@ function giveDload(data){
 		 try {
     var successful = document.execCommand('copy');
     var msg = successful ? 'coppied' : 'not coppied';
-    console.log('Copying text command was ' + msg);
+    console.log(msg);
   } catch (err) {
     console.log('Oops, unable to copy');
   }
