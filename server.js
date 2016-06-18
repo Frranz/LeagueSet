@@ -23,6 +23,10 @@ app.use('/download', function(req,res){
 	});
 });
 
+app.use('/riot.txt',function(){
+	res.send("2b0cd195-4287-4f1f-9ca4-5567e53bd48a")
+})
+
 app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/index.html'));
 });
