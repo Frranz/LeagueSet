@@ -18,6 +18,7 @@ app.use('/download', function(req,res){
 			res.download(__dirname+"/temp/zip_here/"+req.url);
 		}else{
 			res.send("file does not exist. <br> Note: files are deleted 60 seconds after creation")
+			console.log(err)
 		}
 	});
 });
