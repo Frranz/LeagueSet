@@ -13,7 +13,7 @@ app.use(express.static('static'));
 
 app.use('/download', function(req,res){
 	console.log("download pls: "+req.url)
-	fs.access(__dirname+"/temp/zip_here/"+req.url,fs.F_OK,function(err){
+	fs.access("/temp/zip_here/"+req.url,fs.F_OK,function(err){
 		if (!err){
 			res.download(__dirname+"/temp/zip_here/"+req.url);
 		}else{
