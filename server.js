@@ -17,7 +17,7 @@ app.use('/download', function(req,res){
 		if (!err){
 			res.download(__dirname+"/temp/zip_here"+req.url);
 		}else{
-			res.send("file does not exist. <br> Note: files are deleted 60 seconds after creation");
+			res.send('<h1>File not found</h1><p>We are sorry, but this file is not on the server.<br><br>Itemsets are deleted 60 seconds after you click champion you want your itemset for. <br>To still get it just go back and reselect your champion <a href="" onclick="window.history.back()">go back</a><br><br></p>');
 			console.log(err)
 		}
 	});
