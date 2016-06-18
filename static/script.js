@@ -17,7 +17,7 @@ $(window).resize(function(){
 	sizeCanvas();
 });
 
-$(document).ready(function(){	
+$(document).ready(function(){
 	$("#summonerInput").hover(function(){
 		$("#iconSearch").animate({
 			color: '#9C27B0'
@@ -106,9 +106,9 @@ $(document).ready(function(){
 
 function fillCanvas(data){
 	$("#set").append('<canvas id="myCanvas" class="itemset">Your Browser sucks</canvas>');
-	sizeCanvas();
 	var canvas = document.getElementById("myCanvas");
 	var ctx = canvas.getContext("2d");
+	sizeCanvas();
 	width = $("#myCanvas").width();
 	for (block in data.blocks){
 		for (item in data.blocks[block].items){
@@ -120,22 +120,22 @@ function fillCanvas(data){
 
 function sizeCanvas(){
 	var canvas = document.getElementById("myCanvas");
-	if ($(window).width()<$(window).height()){
-		canvas.width = $(window).width()*0.4;
-		canvas.height = $(window).width()*0.6;
-		console.log("höher als breit")
-	}else{
-		canvas.width = $(window).height()*0.5222;
-		canvas.height = $(window).height()*0.8;
-		$("#myCanvas").css("margin-bottom","10vh");
-		console.log("breiter als hoch")
-	}
 	if ($(window).width()<1000){
 		$(".download").width("98%");
 		$(".download").css("margin-left","1vw")
 	}else{
+		$("#myCanvas").css("margin-bottom","10vh");
 		$(".download").width("44vw");
 		$(".download").css("margin-left","3vw")
+	}
+	if ($(window).width()<=$(window).height()){
+		canvas.width = $(window).width()*0.4;
+		canvas.height = $(window).width()*0.6;	
+		console.log("höher als breit");	
+	}else{
+		canvas.width = $(window).height()*0.5222;
+		canvas.height = $(window).height()*0.8;
+		console.log("breiter als hoch");		
 	}
 	$("#myCanvas").css("margin-right",$(window).width()/4 - $("#myCanvas").width()/2);
 }
@@ -148,7 +148,14 @@ function giveDload(data,fileNum){
 	$("#downloadSet").on('click',function(){
 		window.location.href="/download/"+fileNum+".zip";
 	})
-	
+	if ($(window).width()<1000){
+		$(".download").width("98%");
+		$(".download").css("margin-left","1vw")
+	}else{
+		$("#myCanvas").css("margin-bottom","10vh");
+		$(".download").width("44vw");
+		$(".download").css("margin-left","3vw")
+	}
 	
 	
 	$("#copyText").click(function(){
