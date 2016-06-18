@@ -11,7 +11,16 @@ app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 app.use(express.static('static'));
 
-app.use('/download', express.static("temp/zip_here"));
+app.use('/download', function(req,res){
+	console.log("download pls: "+req.url)
+	fs.access(__dirname+"/temp/zip_here/"+req.url,fs.F_OK,function(err){
+		if (!err){
+			res.download(__dirname+"/temp/zip_here/"+req.url);
+		}else{
+			res.send("file does not exist. <br> Note: files are deleted 60 seconds after creation")
+		}
+	});
+});
 
 app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/index.html'));
