@@ -133,6 +133,9 @@ function sizeCanvas(){
 	if ($(window).width()<1000){
 		$(".download").width("98%");
 		$(".download").css("margin-left","1vw")
+	}else{
+		$(".download").width("44vw");
+		$(".download").css("margin-left","3vw")
 	}
 	$("#myCanvas").css("margin-right",$(window).width()/4 - $("#myCanvas").width()/2);
 }
