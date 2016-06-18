@@ -13,11 +13,11 @@ app.use(express.static('static'));
 
 app.use('/download', function(req,res){
 	console.log("download pls: "+req.url)
-	fs.access("/temp/zip_here/"+req.url,fs.F_OK,function(err){
+	fs.access(__dirname+"/temp/zip_here/"+req.url,fs.F_OK,function(err){
 		if (!err){
 			res.download(__dirname+"/temp/zip_here/"+req.url);
 		}else{
-			res.send("file does not exist. <br> Note: files are deleted 60 seconds after creation")
+			res.send("file does not exist. <br> Note: files are deleted 60 seconds after creation");
 			console.log(err)
 		}
 	});
@@ -445,7 +445,7 @@ function createZip(itemSet,champion,next){
 						fs.writeFile(__dirname+"/temp/zip_this/"+dirName+"/League of Legends/Config/Champions/"+champion+"/Best Build ever.json",JSON.stringify(itemSet,null,"\t"),function(){
 							//ZIP IT
 								//DEFINE SHIT
-							var output = fs.createWriteStream('temp/zip_here/'+dirName+'.zip');
+							var output = fs.createWriteStream(__dirname+'/temp/zip_here/'+dirName+'.zip');
 							var archive = archiver('zip');
 
 							output.on('close', function () {
