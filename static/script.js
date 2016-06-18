@@ -1,3 +1,5 @@
+﻿var itemset;
+
 function drawItem(row,column,itemId,width){
 	console.log("going to Fill Canvas")
 	var canvas = document.getElementById("myCanvas");
@@ -128,13 +130,17 @@ function sizeCanvas(){
 		$("#myCanvas").css("margin-bottom","10vh");
 		console.log("breiter als hoch")
 	}
+	if ($(window).width()<1000){
+		$(".download").width("98%");
+		$(".download").css("margin-left","1vw")
+	}
 	$("#myCanvas").css("margin-right",$(window).width()/4 - $("#myCanvas").width()/2);
 }
 
 function giveDload(data,fileNum){
 	var howFast = 'Open the ZIP Archive with your extracter of choice. Then copy the League Of Legends folder in your Riot Games installation folder <b>NEXT TO</b> the existing LoL Folder.'
 	var howSlow = 'Click the copy button. Open Riot Games &rarr;LeagueOfLegends &rarr;config &rarr;Champions &rarr;*Champion* &rarr; Recommended. There you have to create a JSON file.(right click <b>&rarr;</b> new <b>&rarr;</b> textfile <b>&rarr;</b> paste the copied string and save as something.json).'
-	var content = '<p class="setOption" id="dLoad">do it fast</p><p class="setOption" id="copy">do it pussy</p><button id="downloadSet">Download</button><textarea readonly wrap="off" id="itemSetString">'+JSON.stringify(data,null,"\t")+'</textarea><button id="copyText">Copy</button><p id="where">Where should I put these things</p><p class="dLoadHow"style="clear:left">'+howFast+'</p><p class="dLoadHow">'+howSlow+'</p>'
+	var content = '<p class="setOption" id="dLoad">Download → Pasta</p><p class="setOption" id="copy">Copy→*a lot of steps*→ Pasta</p><button id="downloadSet">Download</button><textarea readonly wrap="off" id="itemSetString">'+JSON.stringify(data,null,"\t")+'</textarea><button id="copyText">Copy</button><p id="where">Where should I put these things</p><p class="dLoadHow"style="clear:left">'+howFast+'</p><p class="dLoadHow">'+howSlow+'</p>'
 	$("#set").append('<div class="download">'+content+'</div>');
 	$("#downloadSet").on('click',function(){
 		window.location.href="/download/"+fileNum+".zip";
