@@ -17,7 +17,7 @@ app.use('/download', function(req,res){
 		if (!err){
 			res.download(__dirname+"/temp/zip_here"+req.url);
 		}else{
-			res.send('<h1>File not found</h1><p>We are sorry, but this file is not on the server.<br><br>Itemsets are deleted 60 seconds after you click champion you want your itemset for. <br>To still get it just go back and reselect your champion <a href="" onclick="window.history.back()">go back</a><br><br></p>');
+			res.send('<h1>File not found</h1><p>We are sorry, but this file is not on the server.<br><br>Itemsets are deleted 60 seconds after you click the champion you want your itemset for. <br>To still get it just go back and reselect your champion <a href="" onclick="window.history.back()">go back</a><br><br></p>');
 			console.log(err)
 		}
 	});
@@ -222,7 +222,8 @@ function createSet(req,res){
 	for (k=0;k<matches.matches.length;k++){
 		if (matches.matches[k].champion==champIDs.byName[champion] && gamesFound<10){
 			gamesFound+=1;
-			urlMatch = 'https://euw.api.pvp.net/api/lol/euw/v2.2/match/'+matches.matches[k].matchId+'?includeTimeline=true&api_key='+api_key;
+			var reg = matches.matches[k].region
+			urlMatch = 'https://euw.api.pvp.net/api/lol/'+reg.toLowerCase()+'/v2.2/match/'+matches.matches[k].matchId+'?includeTimeline=true&api_key='+api_key;
 			riotApiQueue.push({url:urlMatch} ,function(returnObj){
 				gamesAn +=1;
 				if (returnObj.response!=undefined){
@@ -324,7 +325,8 @@ function createSet(req,res){
 						console.log("no timeline");
 	                }
 					}else{
-						console.log("Error ev"+returnObj.response.statusCode);
+						console.log("error ev: "+returnObj.response.statusCode);
+						console.log(returnObj.response.request.uri.href)
 					}
 				}else{
 					console.log("stupid error"+JSON.stringify(returnObj))
