@@ -223,7 +223,7 @@ function createSet(req,res){
 		if (matches.matches[k].champion==champIDs.byName[champion] && gamesFound<10){
 			gamesFound+=1;
 			var reg = matches.matches[k].region
-			urlMatch = 'https://euw.api.pvp.net/api/lol/'+reg.toLowerCase()+'/v2.2/match/'+matches.matches[k].matchId+'?includeTimeline=true&api_key='+api_key;
+			urlMatch = 'https://'+reg.toLowerCase()+'.api.pvp.net/api/lol/'+reg.toLowerCase()+'/v2.2/match/'+matches.matches[k].matchId+'?includeTimeline=true&api_key='+api_key;
 			riotApiQueue.push({url:urlMatch} ,function(returnObj){
 				gamesAn +=1;
 				if (returnObj.response!=undefined){
