@@ -1,4 +1,4 @@
-﻿var itemset;
+﻿var regions = ["euw","eune","br","jp","kr","lan","las","na","oce","ru","tr"];
 
 function drawItem(row,column,itemId,width){
 	console.log("going to Fill Canvas")
@@ -14,35 +14,73 @@ function drawItem(row,column,itemId,width){
 
 
 $(window).resize(function(){
-	sizeCanvas();
+	try{
+		sizeCanvas();
+	}catch(e){} 
 });
 
 $(document).ready(function(){
-	$("#summonerInput").hover(function(){
+	//COLOR ON HOVER
+	$(".search").hover(function(){
 		$("#iconSearch").animate({
 			color: '#9C27B0'
 		}, 200);
-		$("#summonerInput").animate({
+		$(".search").animate({
 			borderBottomColor: '#9C27B0'
 		}, 200);
+		$(".region").animate({
+			color:'#F9A825'
+		},500)
 	}, function(){
 		$("#iconSearch").animate({
 			color: '#c9c9c9'
 		}, 200);
-		$("#summonerInput").animate({
+		$(".search").animate({
 			borderBottomColor: '#c9c9c9'
 		}, 200);
+		$(".region").animate({
+			color:'#c9c9c9'
+		},200)
 	});
 	
+	// FILL REGIONLIST
+	$(".regList").html('<li valuel="'+regions[0]+'">'+regions[0].toUpperCase()+'</li>');
+	
+	// FIX INPUT HEIGHT
+	$(".search").css("height",$(".search").height()+"px")
+	
+	//REGION COLLAPSE
+		// HANDLER FUNCTIONS
+	function ellapse(){
+		for (i=1;i<regions.length;i++){
+			$(".regList").append('<li valuel="'+regions[i]+'">'+regions[i].toUpperCase()+'</li>');
+		}
+		console.log(i)
+		$('li').one('click',function(){
+			var ind = $(this).index();
+			var h = regions[ind];
+			regions[ind] = regions[0];
+			regions[0] = h;
+			collapse();
+		})
+	}
+	
+	function collapse(){
+		console.log("j")
+		$(".regList").html('<li value="'+regions[0]+'">'+regions[0].toUpperCase()+'</li>')
+		$("li").one("click",ellapse);
+	}
+	$('li').one('click',ellapse);
 	$("#summonerSubmit").submit(function(e){
 		e.preventDefault();
 		
 		$("#set").empty();
 		
 		var obj = {
-				name: $("#summonerInput").val()
+				name: $("#summonerInput").val(),
+				region:regions[0]
 		};
-		
+		//GET SUGGESTED CHAMPIONS
 		$.ajax({
 			type:"POST",
 			url:"/getData",
@@ -52,12 +90,15 @@ $(document).ready(function(){
 				console.log(data);
 				if(data.status==200){
 				data = data.responseJSON;
+				
 				for (i=0;i<data.sugList.suggested.length;i++){
 					$("#set").append('<img class="suggested animated champsIn" champion="'+data.sugList.suggested[i]+'" src="http://ddragon.leagueoflegends.com/cdn/6.11.1/img/champion/'+data.sugList.suggested[i]+'.png">');
 				}
+				
 				$(".suggested").on("animationend",function(){
 					$(this).removeClass("champsIn");
 				})
+				
 					$(".suggested").one("click",function(){
 						$(".suggested").not(this).remove();
 						$(this).addClass("champFocus");
@@ -67,13 +108,14 @@ $(document).ready(function(){
 							champion:champion,
 							matches:data.matches
 						}
-						
+						//GET ITEMSET
 						$.ajax({
 							type:"POST",
 							url:"/getSet",
 							dataType:"json",
 							data:sendThis,
 							complete:function(data){
+
 								if (data.status==200){
 									data = data.responseJSON;
 									itemset = data.itemset;
@@ -81,23 +123,28 @@ $(document).ready(function(){
 									fillCanvas(itemset);
 									giveDload(itemset,data.zipcode);
 									var fac = 200; 
+									
 									for (i=0;i<fac;i+=1){
 										setTimeout(function(){window.scrollBy(0,$(window).height()/fac)},5*i);
 									}
+									
 								}else{
 									console.log(data.status);
 								}
+								
 							}
 						})
 					})
-//center Pictures
+//center Pictures (here)
 				}else{
 					console.log(data.status)
+					
 					if (data.status==404){
 						alert("user not found");
 					}else if(data.status==607){
 						alert("user has no ranked games");
 					}
+
 				}
 			}
 		})

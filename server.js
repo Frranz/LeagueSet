@@ -34,14 +34,15 @@ app.get('/', function (req, res) {
 // MAIN HANDLER
 app.post("/getData", function(req,res){
 	var name = req.body.name;
-	urlSummonerID = 'https://euw.api.pvp.net/api/lol/euw/v1.4/summoner/by-name/' + name + '?api_key=' + api_key;
+	var reg = req.body.region;
+	urlSummonerID = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v1.4/summoner/by-name/' + name + '?api_key=' + api_key;
 	riotApiQueue.push({url:urlSummonerID}, function(returnObj){
 		if (returnObj.response.statusCode==200){
 		data = JSON.parse(returnObj.body);
 		id = data[Object.keys(data)[0]].id;
 		console.log("Summoner ID = " + id);
 		
-		urlMatches = 'https://euw.api.pvp.net/api/lol/euw/v2.2/matchlist/by-summoner/'+id+'?rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5,RANKED_SOLO_5x5&seasons=SEASON2016&api_key='+api_key;
+		urlMatches = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v2.2/matchlist/by-summoner/'+id+'?rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5,RANKED_SOLO_5x5&seasons=SEASON2016&api_key='+api_key;
 		riotApiQueue.push({url:urlMatches} ,function(returnObj){
 			if (returnObj.response.statusCode==200){
 				data = JSON.parse(returnObj.body);
