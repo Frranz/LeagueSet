@@ -1,13 +1,3 @@
 http://www.w3schools.com/tags/tag_base.asp
 
-				   <li value="br">BR</li>
-				   <li value="eune">EUNE</li>
-				   <li value="euw">EUW</li>
-				   <li value="jp">JP</li>
-				   <li value="kr">KR</li>
-				   <li value="lan">LAN</li>
-				   <li value="las">LAS</li>
-				   <li value="na">NA</li>
-				   <li value="oce">OCE</li>
-				   <li value="ru">RU</li>
-				   <li value="tr">TR</li>
+frames manchmal 0 events zb letzter frame 335463467 LAS
