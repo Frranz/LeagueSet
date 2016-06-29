@@ -75,7 +75,7 @@ $(document).ready(function(){
 		e.preventDefault();
 		
 		$("#set").empty();
-		
+		$("#divider").empty();
 		var obj = {
 				name: $("#summonerInput").val(),
 				region:regions[0]
@@ -90,7 +90,7 @@ $(document).ready(function(){
 				console.log(data);
 				if(data.status==200){
 				data = data.responseJSON;
-				
+				$("#divider").append('<h2>Pick a Champion</h2><hr>')
 				for (i=0;i<data.sugList.suggested.length;i++){
 					$("#set").append('<img class="suggested animated champsIn" champion="'+data.sugList.suggested[i]+'" src="http://ddragon.leagueoflegends.com/cdn/6.11.1/img/champion/'+data.sugList.suggested[i]+'.png">');
 				}
@@ -100,6 +100,7 @@ $(document).ready(function(){
 				})
 				
 					$(".suggested").one("click",function(){
+						$("h2").html("Win Games!");
 						$(".suggested").not(this).remove();
 						$(this).addClass("champFocus");
 						

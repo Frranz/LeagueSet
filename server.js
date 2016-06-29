@@ -24,7 +24,7 @@ app.use('/download', function(req,res){
 });
 
 app.use('/riot.txt',function(req,res){
-	res.send("2b0cd195-4287-4f1f-9ca4-5567e53bd48a")
+	res.send("21aa8b45-fada-4563-ac9c-8c3d976abf0b")
 })
 
 app.get('/', function (req, res) {
@@ -256,20 +256,22 @@ function createSet(req,res){
 		            //GET EARLYB
 		            var earlyBset =[];
 		            for (i=2;i<data.timeline.frames.length;i++){
-		                for (j=0;j<data.timeline.frames[i].events.length;j++){
-		                    if (data.timeline.frames[i].events[j].participantId==pID && data.timeline.frames[i].events[j].eventType=="ITEM_PURCHASED"){
-		                    	if (itemData.data[data.timeline.frames[i].events[j].itemId]!=undefined){
-		                    		if(itemData.data[data.timeline.frames[i].events[j].itemId].into!=undefined && itemData.data[data.timeline.frames[i].events[j].itemId].depth>1){
-		                    	        if(earlyBset.length<2 && itemData.data[data.timeline.frames[i].events[j].itemId].group!=undefined){
-		                    	        	if (earlyBset.length<2 && itemData.data[data.timeline.frames[i].events[j].itemId].group.indexOf("Boot")==-1){
-		                    	        		earlyBset.push(itemData.data[data.timeline.frames[i].events[j].itemId].name);
-		                    	        	}
-		                    	        }else if(earlyBset.length<2){
-		                    	        	earlyBset.push(itemData.data[data.timeline.frames[i].events[j].itemId].name);
-		                    	        }
-		                    		}                  		
-		                    	}
-		                    }
+		            	if (data.timeline.frames[i].events!=undefined){
+			                for (j=0;j<data.timeline.frames[i].events.length;j++){
+			                    if (data.timeline.frames[i].events[j].participantId==pID && data.timeline.frames[i].events[j].eventType=="ITEM_PURCHASED"){
+			                    	if (itemData.data[data.timeline.frames[i].events[j].itemId]!=undefined){
+			                    		if(itemData.data[data.timeline.frames[i].events[j].itemId].into!=undefined && itemData.data[data.timeline.frames[i].events[j].itemId].depth>1){
+			                    	        if(earlyBset.length<2 && itemData.data[data.timeline.frames[i].events[j].itemId].group!=undefined){
+			                    	        	if (earlyBset.length<2 && itemData.data[data.timeline.frames[i].events[j].itemId].group.indexOf("Boot")==-1){
+			                    	        		earlyBset.push(itemData.data[data.timeline.frames[i].events[j].itemId].name);
+			                    	        	}
+			                    	        }else if(earlyBset.length<2){
+			                    	        	earlyBset.push(itemData.data[data.timeline.frames[i].events[j].itemId].name);
+			                    	        }
+			                    		}                  		
+			                    	}
+			                    }
+			                }
 		                }
 		            }
 		            // CHECK SET START
