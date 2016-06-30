@@ -6,6 +6,7 @@
 
 html,
 body{
+	position:absolute;
 	background: #3F51B5;
 	width: 100%;
 	height: 100%;
@@ -112,6 +113,10 @@ hr{
 	margin-left:10%;
 	margin-top:2vw;
 	margin-bottom:1vw;
+}
+
+#set{
+	width:100%;
 }
 
 #set>img{
@@ -233,13 +238,16 @@ hr{
 	margin-right:5%;
 	margin-top:1vh;
 }
-.footer{
-	position:fixed;
-	bottom:0;
-	margin-bottom:1vw;
+.fusser{
+	clear: both;
+	float: left;
+	margin-bottom: 1vw;
+	position: absolute;
+	bottom: 0;
 }
-.footer>p{
+.fusser>p{
 	color:#c9c9c9;
 	width:90%;
 	margin-left:5%;	
+	height:5vh;
 }
