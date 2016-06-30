@@ -24,7 +24,7 @@ app.use('/download', function(req,res){
 });
 
 app.use('/riot.txt',function(req,res){
-	res.send("21aa8b45-fada-4563-ac9c-8c3d976abf0b")
+	res.sendFile(__dirname+"/static/riot.txt")
 })
 
 app.get('/', function (req, res) {
