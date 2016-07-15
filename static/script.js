@@ -100,7 +100,6 @@ $(document).ready(function(){
 				})
 				
 					$(".suggested").one("click",function(){
-						$(".fusser").css("position","unset");
 						$("h2").html("Win Games!");
 						$(".suggested").not(this).remove();
 						$(this).addClass("champFocus");
@@ -124,6 +123,9 @@ $(document).ready(function(){
 									console.log(itemset);
 									fillCanvas(itemset);
 									giveDload(itemset,data.zipcode);
+
+									$(".fusser").css("position","unset");
+									
 									var fac = 200; 
 									
 									for (i=0;i<fac;i+=1){
@@ -141,12 +143,24 @@ $(document).ready(function(){
 				}else{
 					console.log(data.status)
 					
-					if (data.status==404){
-						alert("user not found");
-					}else if(data.status==607){
-						alert("user has no ranked games");
+					switch(data.status){
+						case 404: 
+							alert("user not found");
+							break;
+						case 607:
+							alert("user has no ranked games");
+							break;
+						case 429:
+							alert("too many requests. pls wait a few seconds");
+							break;
+						case 400:
+							$(".search").addClass("badRequest");
+							$(".search").on("animationend",function(){
+								$(".search").removeClass("badRequest");
+							})
+						default:
+							alert("error"+data.status);
 					}
-
 				}
 			}
 		})

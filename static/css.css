@@ -109,12 +109,15 @@ h2{
 	animation-fill-mode:forwards
 }
 
+#divider{
+	margin-bottom:2.5vw;
+}
+
 hr{
 	border-bottom:1px solid #c9c9c9;
 	width:80%;
 	margin-left:10%;
 	margin-top:2vw;
-	margin-bottom:1vw;
 }
 
 #set{
@@ -129,40 +132,6 @@ hr{
 	margin-right:2.5vw;
 	margin-bottom:2.5vw;
 	cursor:pointer;
-}
-/*DEFINE ANIMATIONS*/
-@keyframes champsIn{
-	from {
-        opacity: 0;
-        transform: translateY(-50%);
-  	}
-  	to {
-    	opacity: 1;
-    	transform: none;
-  	}
-}
-
-.champsIn{
-	animation:champsIn 1s ease 1;
-	animation-fill-mode:forwards
-}
-
-@keyframes champFocus{
-	from{
-			width:8vw;
-			height:8vw;
-	}
-	to{
-			margin-left:18vw;
-			width:12vw;
-			height:12vw;
-	}
-}
-
-.champFocus{
-	float:left;
-	animation:champFocus 1s ease 1;
-	animation-fill-mode:forwards
 }
 
 .itemset{
@@ -179,9 +148,7 @@ hr{
 	height:auto;
 	clear:left;
 	float:left;
-	margin-top:5vh;
-	margin-left:3vw;
-	margin-bottom:3vw;
+	margin:2.5vw;
 	background-color:#7986CB;
 }
 
@@ -197,7 +164,7 @@ hr{
 #downloadSet{
 	width:40%;
 	height:8vh;
-	margin-top:4vh;
+	margin-top:2.5vw;
 	margin-right:4.5%;
 	margin-left:4.5%;
 	float:left;
@@ -211,8 +178,8 @@ hr{
 	float:left;
 	width:40%;
 	height:20vh;
-	margin-bottom:1vh;
-	margin-top:4vh;
+	margin-bottom:1vw;
+	margin-top:2.5vw;
 	margin-right:4.5%;
 	margin-left:5%;
 	font-size:0.7em
@@ -222,7 +189,7 @@ hr{
 #copyText{
 	clear:right;
 	float:right;
-	margin-bottom:3vh;
+	margin-bottom:1.5vw;
 }
 
 .setOption{
@@ -239,7 +206,7 @@ hr{
 	float:left;
 	margin-left:5%;
 	margin-right:5%;
-	margin-top:1vh;
+	margin-top:1vw;
 }
 .fusser{
 	clear: both;
@@ -251,6 +218,54 @@ hr{
 .fusser>p{
 	color:#c9c9c9;
 	width:90%;
-	margin-left:5%;	
-	height:5vh;
+	margin-left:5%;
+}
+
+/*DEFINE ANIMATIONS*/
+@keyframes badRequest{	
+	25%{
+		transform:translateX(-20%);
+	}
+	75%{
+		transform:translateX(20%)
+	}
+}
+
+@keyframes champsIn{
+	from {
+        opacity: 0;
+        transform: translateY(-50%);
+  	}
+  	to {
+    	opacity: 1;
+    	transform: none;
+  	}
+}
+
+@keyframes champFocus{
+	from{
+			width:8vw;
+			height:8vw;
+	}
+	to{
+			margin-left:18vw;
+			width:12vw;
+			height:12vw;
+	}
+}
+
+.badRequest{
+	animation:badRequest 1s ease 1;
+	animation-fill-mode:forwards;
+}
+
+.champsIn{
+	animation:champsIn 1s ease 1;
+	animation-fill-mode:forwards
+}
+
+.champFocus{
+	float:left;
+	animation:champFocus 1s ease 1;
+	animation-fill-mode:forwards
 }

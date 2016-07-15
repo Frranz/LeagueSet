@@ -41,9 +41,7 @@ app.post("/getData", function(req,res){
 		data = JSON.parse(returnObj.body);
 		id = data[Object.keys(data)[0]].id;
 		console.log("Summoner ID = " + id);
-		
 		urlMatches = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v2.2/matchlist/by-summoner/'+id+'?rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5,RANKED_SOLO_5x5&seasons=SEASON2016&api_key='+api_key;
-		console.log(urlMatches);
 		riotApiQueue.push({url:urlMatches} ,function(returnObj){
 			if (returnObj.response.statusCode==200){
 				data = JSON.parse(returnObj.body);
