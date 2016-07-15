@@ -45,6 +45,7 @@ button{
 
 .regList{
 	list-style-type: none;
+	cursor:pointer;
 }
 
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -86,6 +87,7 @@ button{
 	width:auto;
 	background:transparent;
 	float:right;
+	cursor:pointer;
 }
 
 .header{
@@ -126,6 +128,7 @@ hr{
 	margin-left:2.5vw;
 	margin-right:2.5vw;
 	margin-bottom:2.5vw;
+	cursor:pointer;
 }
 /*DEFINE ANIMATIONS*/
 @keyframes champsIn{

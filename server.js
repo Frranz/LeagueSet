@@ -43,6 +43,7 @@ app.post("/getData", function(req,res){
 		console.log("Summoner ID = " + id);
 		
 		urlMatches = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v2.2/matchlist/by-summoner/'+id+'?rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5,RANKED_SOLO_5x5&seasons=SEASON2016&api_key='+api_key;
+		console.log(urlMatches);
 		riotApiQueue.push({url:urlMatches} ,function(returnObj){
 			if (returnObj.response.statusCode==200){
 				data = JSON.parse(returnObj.body);
@@ -88,7 +89,7 @@ app.listen(port, function () {
 });
 
 // MANAGE API REQUESTS
-const api_key = 'd64c83f3-4138-4f72-9735-914f6ad97494';
+const api_key = 'RGAPI-A784BBB0-5BA3-4164-9521-4E8D5D58697C';
 const numberCallsCalls = 3000;
 const timeCalls = 10000;
 var currentCalls = 0;
