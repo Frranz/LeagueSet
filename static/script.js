@@ -20,6 +20,9 @@ $(window).resize(function(){
 });
 
 $(document).ready(function(){
+	//PRETEND RESIZE
+	$(window).resize();
+	
 	//COLOR ON HOVER
 	$(".search").hover(function(){
 		$("#iconSearch").animate({
@@ -156,8 +159,9 @@ $(document).ready(function(){
 						case 400:
 							$(".search").addClass("badRequest");
 							$(".search").on("animationend",function(){
-								$(".search").removeClass("badRequest");
-							})
+								$(this).removeClass("badRequest");
+							});
+							break;
 						default:
 							alert("error"+data.status);
 					}

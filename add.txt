@@ -1,3 +1,7 @@
 http://www.w3schools.com/tags/tag_base.asp
 
 frames manchmal 0 events zb letzter frame 335463467 LAS
+
+	background-image:url(images/blurry_background.png);
+	background-size:cover;
+	background-repeat: no-repeat;
