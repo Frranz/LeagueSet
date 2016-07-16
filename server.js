@@ -49,7 +49,7 @@ app.post("/getData", function(req,res){
 					possibleSets(data,function(sugList){
 						//return sugList
 						res.header(200);
-						res.send({"sugList":sugList,"matches":data});
+						res.send(sugList);
 						})
 				}else{
 					console.log("sucky")
@@ -139,7 +139,7 @@ function getData(url, callback){
 
 function possibleSets(data,done){
 	var champions = {};
-	var giveBack = {"suggested":[],"not":[]};
+	var giveBack = {"suggested":[]};
 	for (i=0;i<data.matches.length;i++){
 		if (champions[data.matches[i].champion]==undefined){
 			champions[data.matches[i].champion]=1
@@ -149,11 +149,16 @@ function possibleSets(data,done){
 	}
 	for (i=0;i<Object.keys(champions).length;i++){
 		if(champions[Object.keys(champions)[i]]>=10){
-			giveBack.suggested.push(champIDs.byId[Object.keys(champions)[i]])
-		}else{
-			giveBack.not.push(champIDs.byId[Object.keys(champions)[i]])
+			giveBack.suggested.push({"name":champIDs.byId[Object.keys(champions)[i]],"matches":[]})
+			
+			for (j=0;j<data.matches.length;j++){
+				if (data.matches[j].champion==Object.keys(champions)[i] && giveBack.suggested[giveBack.suggested.length-1].matches.length<10){
+					giveBack.suggested[giveBack.suggested.length-1].matches.push({"id":data.matches[j].matchId,"reg":data.matches[j].region});
+				}
+			}
 		}
 	}
+	console.log(JSON.stringify(giveBack))
 //return giveBack to client
 	done(giveBack)
 }
@@ -210,235 +215,228 @@ request({url:"https://global.api.pvp.net/api/lol/static-data/euw/v1.2/item?itemL
 
 function createSet(req,res){
 	var champion = req.body.champion;
-	var matches = req.body.matches;
+	var matches = req.body.matches.matches;
 	console.log("champion: "+champion);
 	var items = {
 					"start":{},
 					"earlyB":{},
 					"finItems":{}
 				}
-	var gamesFound = 0;
 	var gamesAn = 0;
-	for (k=0;k<matches.matches.length;k++){
-		if (matches.matches[k].champion==champIDs.byName[champion] && gamesFound<10){
-			gamesFound+=1;
-			var reg = matches.matches[k].region
-			urlMatch = 'https://'+reg.toLowerCase()+'.api.pvp.net/api/lol/'+reg.toLowerCase()+'/v2.2/match/'+matches.matches[k].matchId+'?includeTimeline=true&api_key='+api_key;
-			riotApiQueue.push({url:urlMatch} ,function(returnObj){
-				gamesAn +=1;
-				if (returnObj.response!=undefined){
-				if (returnObj.response.statusCode==200){
-					if (JSON.parse(returnObj.body).timeline!=undefined){
-					data = JSON.parse(returnObj.body);
-					console.log("gotgame"+data.matchId);
-					
-					//get Participant ID
-					var pID;
-					
-		            for (j=0;j<data.participants.length;j++){
-		                if (data.participants[j].championId==champIDs.byName[champion]){
-		                    pID = data.participants[j].participantId;
-		                }
-		            }
-	
-					//get Start Items
-		            var startSet=[];
+	for (k=0;k<matches.length;k+=1){
+		var reg = matches[k].reg
+		urlMatch = 'https://'+reg.toLowerCase()+'.api.pvp.net/api/lol/'+reg.toLowerCase()+'/v2.2/match/'+matches[k].id+'?includeTimeline=true&api_key='+api_key;
+		riotApiQueue.push({url:urlMatch} ,function(returnObj){
+			gamesAn +=1;
+			if (returnObj.response!=undefined){
+			if (returnObj.response.statusCode==200){
+				if (JSON.parse(returnObj.body).timeline!=undefined){
+				data = JSON.parse(returnObj.body);
+				console.log("gotgame"+data.matchId);
+				
+				//get Participant ID
+				var pID;
+				
+	            for (j=0;j<data.participants.length;j++){
+	                if (data.participants[j].championId==champIDs.byName[champion]){
+	                    pID = data.participants[j].participantId;
+	                }
+	            }
 
-                    for (i=0;i<data.timeline.frames[1].events.length;i++){
-                        if (data.timeline.frames[1].events[i].participantId==pID && data.timeline.frames[1].events[i].eventType=="ITEM_PURCHASED"){
-                        	if(startSet.indexOf(itemData.data[data.timeline.frames[1].events[i].itemId].name)==-1){
-                        		startSet.push(itemData.data[data.timeline.frames[1].events[i].itemId].name);
-                        	}
-                        }
+				//get Start Items
+	            var startSet=[];
+
+                for (i=0;i<data.timeline.frames[1].events.length;i++){
+                    if (data.timeline.frames[1].events[i].participantId==pID && data.timeline.frames[1].events[i].eventType=="ITEM_PURCHASED"){
+                    	if(startSet.indexOf(itemData.data[data.timeline.frames[1].events[i].itemId].name)==-1){
+                    		startSet.push(itemData.data[data.timeline.frames[1].events[i].itemId].name);
+                    	}
                     }
-                    
-		            //GET EARLYB
-		            var earlyBset =[];
-		            for (i=2;i<data.timeline.frames.length;i++){
-		            	if (data.timeline.frames[i].events!=undefined){
-			                for (j=0;j<data.timeline.frames[i].events.length;j++){
-			                    if (data.timeline.frames[i].events[j].participantId==pID && data.timeline.frames[i].events[j].eventType=="ITEM_PURCHASED"){
-			                    	if (itemData.data[data.timeline.frames[i].events[j].itemId]!=undefined){
-			                    		if(itemData.data[data.timeline.frames[i].events[j].itemId].into!=undefined && itemData.data[data.timeline.frames[i].events[j].itemId].depth>1){
-			                    	        if(earlyBset.length<2 && itemData.data[data.timeline.frames[i].events[j].itemId].group!=undefined){
-			                    	        	if (earlyBset.length<2 && itemData.data[data.timeline.frames[i].events[j].itemId].group.indexOf("Boot")==-1){
-			                    	        		earlyBset.push(itemData.data[data.timeline.frames[i].events[j].itemId].name);
-			                    	        	}
-			                    	        }else if(earlyBset.length<2){
-			                    	        	earlyBset.push(itemData.data[data.timeline.frames[i].events[j].itemId].name);
-			                    	        }
-			                    		}                  		
-			                    	}
-			                    }
-			                }
+                }
+                
+	            //GET EARLYB
+	            var earlyBset =[];
+	            for (i=2;i<data.timeline.frames.length;i++){
+	            	if (data.timeline.frames[i].events!=undefined){
+		                for (j=0;j<data.timeline.frames[i].events.length;j++){
+		                    if (data.timeline.frames[i].events[j].participantId==pID && data.timeline.frames[i].events[j].eventType=="ITEM_PURCHASED"){
+		                    	if (itemData.data[data.timeline.frames[i].events[j].itemId]!=undefined){
+		                    		if(itemData.data[data.timeline.frames[i].events[j].itemId].into!=undefined && itemData.data[data.timeline.frames[i].events[j].itemId].depth>1){
+		                    	        if(earlyBset.length<2 && itemData.data[data.timeline.frames[i].events[j].itemId].group!=undefined){
+		                    	        	if (earlyBset.length<2 && itemData.data[data.timeline.frames[i].events[j].itemId].group.indexOf("Boot")==-1){
+		                    	        		earlyBset.push(itemData.data[data.timeline.frames[i].events[j].itemId].name);
+		                    	        	}
+		                    	        }else if(earlyBset.length<2){
+		                    	        	earlyBset.push(itemData.data[data.timeline.frames[i].events[j].itemId].name);
+		                    	        }
+		                    		}                  		
+		                    	}
+		                    }
 		                }
-		            }
-		            // CHECK SET START
-		            var startAdded=false;
-	                for (p=0;p<Object.keys(items.start).length;p++){
-	                    if(items.start[Object.keys(items.start)[p]].items.indexOf(startSet[0])>-1 && items.start[Object.keys(items.start)[p]].items.indexOf(startSet[0])>-1){
-	                        items.start[Object.keys(items.start)[p]].used+=1;
-	                        startAdded=true;
-	                        break;
-	                    }
 	                }
-	                //NEW
-	                if (!startAdded){
-	                    items.start[Object.keys(items.start).length+1]={
-	                            "used":1,
-	                            "items":startSet
-	                    }
-	                }
-		            
-		            
-		            // CHECK SET EARLY  
-		            var earlyAdded=false;
-	                for (p=0;p<Object.keys(items.earlyB).length;p++){
-	                    if(items.earlyB[Object.keys(items.earlyB)[p]].items.indexOf(earlyBset[0])>-1 && items.earlyB[Object.keys(items.earlyB)[p]].items.indexOf(earlyBset[0])>-1){
-	                        items.earlyB[Object.keys(items.earlyB)[p]].used+=1;
-	                        earlyAdded=true;
-	                        break;
-	                    }
-	                }
-	                //NEW
-	                if (!earlyAdded){
-	                    items.earlyB[Object.keys(items.earlyB).length+1]={
-	                            "used":1,
-	                            "items":earlyBset
-	                    }
-	                }
-	                
-	                // GET finItems
-	                for (p=0;p<6;p++){
-	                	if (data.participants[pID-1].stats["item"+p]!=undefined&&data.participants[pID-1].stats["item"+p]!=0){
-	                		if(itemData.data[data.participants[pID-1].stats["item"+p]]!=undefined){
-		                		if((itemData.data[data.participants[pID-1].stats["item"+p]].into==undefined&&itemData.data[data.participants[pID-1].stats["item"+p]].depth>1&&itemData.data[data.participants[pID-1].stats["item"+p]].group==undefined) ||itemData.data[data.participants[pID-1].stats["item"+p]].group=="BootsUpgrades"){
-			                		if (items.finItems[itemData.data[data.participants[pID-1].stats["item"+p]].name]==undefined){
-			                			items.finItems[itemData.data[data.participants[pID-1].stats["item"+p]].name]=1;
-			                		}else{
-			                			items.finItems[itemData.data[data.participants[pID-1].stats["item"+p]].name]+=1;
-			                		}
+	            }
+	            // CHECK SET START
+	            var startAdded=false;
+                for (p=0;p<Object.keys(items.start).length;p++){
+                    if(items.start[Object.keys(items.start)[p]].items.indexOf(startSet[0])>-1 && items.start[Object.keys(items.start)[p]].items.indexOf(startSet[0])>-1){
+                        items.start[Object.keys(items.start)[p]].used+=1;
+                        startAdded=true;
+                        break;
+                    }
+                }
+                //NEW
+                if (!startAdded){
+                    items.start[Object.keys(items.start).length+1]={
+                            "used":1,
+                            "items":startSet
+                    }
+                }
+	            
+	            
+	            // CHECK SET EARLY  
+	            var earlyAdded=false;
+                for (p=0;p<Object.keys(items.earlyB).length;p++){
+                    if(items.earlyB[Object.keys(items.earlyB)[p]].items.indexOf(earlyBset[0])>-1 && items.earlyB[Object.keys(items.earlyB)[p]].items.indexOf(earlyBset[0])>-1){
+                        items.earlyB[Object.keys(items.earlyB)[p]].used+=1;
+                        earlyAdded=true;
+                        break;
+                    }
+                }
+                //NEW
+                if (!earlyAdded){
+                    items.earlyB[Object.keys(items.earlyB).length+1]={
+                            "used":1,
+                            "items":earlyBset
+                    }
+                }
+                
+                // GET finItems
+                for (p=0;p<6;p++){
+                	if (data.participants[pID-1].stats["item"+p]!=undefined&&data.participants[pID-1].stats["item"+p]!=0){
+                		if(itemData.data[data.participants[pID-1].stats["item"+p]]!=undefined){
+	                		if((itemData.data[data.participants[pID-1].stats["item"+p]].into==undefined&&itemData.data[data.participants[pID-1].stats["item"+p]].depth>1&&itemData.data[data.participants[pID-1].stats["item"+p]].group==undefined) ||itemData.data[data.participants[pID-1].stats["item"+p]].group=="BootsUpgrades"){
+		                		if (items.finItems[itemData.data[data.participants[pID-1].stats["item"+p]].name]==undefined){
+		                			items.finItems[itemData.data[data.participants[pID-1].stats["item"+p]].name]=1;
+		                		}else{
+		                			items.finItems[itemData.data[data.participants[pID-1].stats["item"+p]].name]+=1;
 		                		}
 	                		}
-	                	}
-	                }
-		            //CHECK IF LAST RUN
-					}else{
-						console.log("no timeline");
-	                }
-					}else{
-						console.log("error ev: "+returnObj.response.statusCode);
-						console.log(returnObj.response.request.uri.href)
-					}
+                		}
+                	}
+                }
+	            //CHECK IF LAST RUN
 				}else{
-					console.log("stupid error"+JSON.stringify(returnObj))
+					console.log("no timeline");
+                }
+				}else{
+					console.log("error ev: "+returnObj.response.statusCode);
+					console.log(returnObj.response.request.uri.href)
 				}
-				if (gamesAn==10){
+			}else{
+				console.log("stupid error"+JSON.stringify(returnObj))
+			}
+			if (gamesAn==10){
 
-					var startSorted=new Array();
-					var earlySorted=new Array();
-					var finSorted= new Array();
-					
-					for (start in items.start){
-						startSorted.push(items.start[start].used);
-					}
-					for (early in items.earlyB){
-						earlySorted.push(items.earlyB[early].used);
-					}
-					for (fin in items.finItems){
-						finSorted.push(items.finItems[fin]);
-					}
-					//SORT
-					startSorted = Object.keys(items.start).sort(function(a,b){return -items.start[a].used+items.start[b].used});
-					earlySorted = Object.keys(items.earlyB).sort(function(a,b){return -items.earlyB[a].used+items.earlyB[b].used});
-					finSorted = Object.keys(items.finItems).sort(function(a,b){return -items.finItems[a]+items.finItems[b]});
-					
-					console.log(JSON.stringify(items));
-					console.log(JSON.stringify(startSorted)+"|"+JSON.stringify(earlySorted)+"|"+JSON.stringify(finSorted));
-					
-					// PREPARE SETS
-					var itemSet={
-							"title":"Best "+champion+" ever",
-							"type":"custom",
-							"map":"any",
-							"mode":"any",
-							"priority":true,
-							"sort":0,
-							"blocks":[
-							          {
-							        	  "type":"Best Start Items",
-							        	  "items":[]
-							          },
-							          {
-							        	  "type":"Early Buys",
-							        	  "items":[]
-							          },
-							          {
-							        	  "type":"Core Items",
-							        	  "items":[]
-							          },
-							          {
-							        	  "type":"Situational Items",
-							        	  "items":[]
-							          },
-							          {
-							        	  "type":"Useful",
-							        	  "items":[
-							        	           {"id":"2043"},
-							        	           {"id":"3340"},
-							        	           {"id":"3341"},
-							        	           {"id":"3363"},
-							        	           {"id":"3364"}
-							        	           ]
-							          }
-							          ]
-					}
-					// START ITEMS
-					for (set in items.start[startSorted[0]].items){
-						itemSet.blocks[0].items.push(
+				var startSorted=new Array();
+				var earlySorted=new Array();
+				var finSorted= new Array();
+				
+				for (start in items.start){
+					startSorted.push(items.start[start].used);
+				}
+				for (early in items.earlyB){
+					earlySorted.push(items.earlyB[early].used);
+				}
+				for (fin in items.finItems){
+					finSorted.push(items.finItems[fin]);
+				}
+				//SORT
+				startSorted = Object.keys(items.start).sort(function(a,b){return -items.start[a].used+items.start[b].used});
+				earlySorted = Object.keys(items.earlyB).sort(function(a,b){return -items.earlyB[a].used+items.earlyB[b].used});
+				finSorted = Object.keys(items.finItems).sort(function(a,b){return -items.finItems[a]+items.finItems[b]});
+				
+				// PREPARE SETS
+				var itemSet={
+						"title":"Best "+champion+" ever",
+						"type":"custom",
+						"map":"any",
+						"mode":"any",
+						"priority":true,
+						"sort":0,
+						"blocks":[
+						          {
+						        	  "type":"Best Start Items",
+						        	  "items":[]
+						          },
+						          {
+						        	  "type":"Early Buys",
+						        	  "items":[]
+						          },
+						          {
+						        	  "type":"Core Items",
+						        	  "items":[]
+						          },
+						          {
+						        	  "type":"Situational Items",
+						        	  "items":[]
+						          },
+						          {
+						        	  "type":"Useful",
+						        	  "items":[
+						        	           {"id":"2043"},
+						        	           {"id":"3340"},
+						        	           {"id":"3341"},
+						        	           {"id":"3363"},
+						        	           {"id":"3364"}
+						        	           ]
+						          }
+						          ]
+				}
+				// START ITEMS
+				for (set in items.start[startSorted[0]].items){
+					itemSet.blocks[0].items.push(
+							{
+								"id":itemByName[items.start[startSorted[0]].items[set]],
+								"count":1
+							}
+					)
+				}
+				// EARLY ITEMS
+				for (set in items.earlyB[earlySorted[0]].items){
+					itemSet.blocks[1].items.push(
 								{
-									"id":itemByName[items.start[startSorted[0]].items[set]],
+									"id":itemByName[items.earlyB[earlySorted[0]].items[set]],
 									"count":1
 								}
-						)
-					}
-					// EARLY ITEMS
-					for (set in items.earlyB[earlySorted[0]].items){
-						itemSet.blocks[1].items.push(
-									{
-										"id":itemByName[items.earlyB[earlySorted[0]].items[set]],
-										"count":1
-									}
-						)
-					}
-					
-					// 	CORE ITEMS
-					for (i=0;i<3;i++){
-						itemSet.blocks[2].items.push(
-									{
-										"id":itemByName[finSorted[i]],
-										"count":1
-									}
-						)
-					}
-					
-					// SITUATIONAL ITEMS
-					for (i=3;i<7 && finSorted[i]!=undefined;i++){
-						itemSet.blocks[3].items.push(
-									{
-										"id":itemByName[finSorted[i]],
-										"count":1
-									}
-						)
-					}
-					console.log(JSON.stringify(itemSet));
-					createZip(itemSet,champion,function(num){
-						console.log(num)
-						res.send({itemset:itemSet,zipcode:num});
-					});
+					)
 				}
-			})
-		}
+				
+				// 	CORE ITEMS
+				for (i=0;i<3;i++){
+					itemSet.blocks[2].items.push(
+								{
+									"id":itemByName[finSorted[i]],
+									"count":1
+								}
+					)
+				}
+				
+				// SITUATIONAL ITEMS
+				for (i=3;i<7 && finSorted[i]!=undefined;i++){
+					itemSet.blocks[3].items.push(
+								{
+									"id":itemByName[finSorted[i]],
+									"count":1
+								}
+					)
+				}
+				console.log(JSON.stringify(itemSet));
+				createZip(itemSet,champion,function(num){
+					console.log(num)
+					res.send({itemset:itemSet,zipcode:num});
+				});
+			}
+		})
 	}
 }
 
