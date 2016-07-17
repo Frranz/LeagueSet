@@ -445,7 +445,7 @@ function createSet(req,res){
 
 function createZip(itemSet,champion,name,next){
 	var dirName = Math.random()*100000000000000000;
-	var gapless = name.replace(new RegExp(' ','g'),'%20');
+	var gapless = name.replace(new RegExp(' ','g'),'_');
 	fs.mkdir(__dirname+"/temp/zip_this/"+dirName,function(){
 		fs.mkdir(__dirname+"/temp/zip_this/"+dirName+"/League of Legends",function(){
 			fs.mkdir(__dirname+"/temp/zip_this/"+dirName+"/League of Legends/Config",function(){
@@ -456,7 +456,7 @@ function createZip(itemSet,champion,name,next){
 							fs.writeFile(__dirname+"/temp/zip_this/"+dirName+"/League of Legends/Config/Champions/"+champion+"/Recommended/"+name+"s_"+champion+".json",JSON.stringify(itemSet,null,"\t"),function(){
 								//ZIP IT
 									//DEFINE SHIT
-								var output = fs.createWriteStream(__dirname+'/temp/zip_here/'+gapless+'s_'+champion+'_from_league-set(dot)herokuapp(dot)com.zip');
+								var output = fs.createWriteStream(__dirname+'/temp/zip_here/'+gapless+'s_'+champion+'_league-set.zip');
 								var archive = archiver('zip');
 	
 								output.on('close', function () {
@@ -476,9 +476,9 @@ function createZip(itemSet,champion,name,next){
 								rmdir(__dirname+"/temp/zip_this/"+dirName,function(err){
 									console.log(!err?dirName+"deleted":err);
 								})
-								next(name+'s_'+champion+'_from_league-set(dot)herokuapp(dot)com.zip');
+								next(gapless+'s_'+champion+'_league-set.zip');
 								setTimeout(function(){
-									fs.unlink(__dirname+"/temp/zip_here/"+gapless+'s_'+champion+'_from_league-set(dot)herokuapp(dot)com.zip',function(err){
+									fs.unlink(__dirname+"/temp/zip_here/"+gapless+'s_'+champion+'_league-set.zip',function(err){
 										console.log(!err?name+"s "+champion+".zip deleted":err);
 									});
 								},10000)
