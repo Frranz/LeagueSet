@@ -124,7 +124,8 @@ $(document).ready(function(){
 						var champion = $(this).attr("champion")
 						var sendThis = {
 							champion:champion,
-							matches:data.suggested[$(this).attr("index")]
+							matches:data.suggested[$(this).attr("index")],
+							name:data.name
 						}
 						
 						console.log(JSON.stringify(sendThis))
@@ -229,7 +230,7 @@ function giveDload(data,fileNum){
 	var content = '<p class="setOption" id="dLoad">Download → Pasta</p><p class="setOption" id="copy">Copy→*a lot of steps*→ Pasta</p><button id="downloadSet">Download</button><textarea readonly wrap="off" id="itemSetString">'+JSON.stringify(data,null,"\t")+'</textarea><button id="copyText">Copy</button><p id="where">Where should I put these things</p><p class="dLoadHow"style="clear:left">'+howFast+'</p><p class="dLoadHow">'+howSlow+'</p>'
 	$("#set").append('<div class="download">'+content+'</div>');
 	$("#downloadSet").on('click',function(){
-		window.location.href="/download/"+fileNum+".zip";
+		window.location.href="/download/"+fileNum;
 	})
 	if ($(window).width()<1000){
 		$(".download").width("98%");
