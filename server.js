@@ -33,6 +33,9 @@ app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/index.html'));
 });
 
+app.get('/google1effa2b7f9a7e0a5.html', function (req, res) {
+	res.sendFile(path.join(__dirname + '/google1effa2b7f9a7e0a5.html'));
+});
 // MAIN HANDLER
 app.post("/getData", function(req,res){
 	var name = req.body.name;
