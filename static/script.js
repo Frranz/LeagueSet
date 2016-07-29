@@ -1,4 +1,4 @@
-﻿var regions = ["euw","eune","br","jp","kr","lan","las","na","oce","ru","tr"];
+var regions = ["euw","eune","br","jp","kr","lan","las","na","oce","ru","tr"];
 
 function drawItem(row,column,itemId,width){
 	console.log("going to Fill Canvas")
@@ -81,7 +81,9 @@ $(document).ready(function(){
 		$(".regList").html('<li value="'+regions[0]+'">'+regions[0].toUpperCase()+'</li>')
 		$("li").one("click",ellapse);
 	}
+	
 	$('li').one('click',ellapse);
+    
 	$("#summonerSubmit").submit(function(e){
 		e.preventDefault();
 		
@@ -89,104 +91,160 @@ $(document).ready(function(){
 		$("#divider").empty();
 		
 		alignFooter();
-		
-		var obj = {
-				name: $("#summonerInput").val(),
-				region:regions[0]
-		};
 		//GET SUGGESTED CHAMPIONS
+        
+        suggestChamps()
+        
+	});
+    
+    //SELECT PAGE STATE
+    var path = location.pathname.replace(/%20/g," ");
+    switch(true){
+        //REGION
+        case /\/sets\/[^\/]+$/.test(path):
+            pathRegion(path);
+            collapse();
+            break;
+        //PLAYER
+        case /\/sets\/[^\/]+\/[^\/]+$/.test(path):
+            pathRegion(path);
+            collapse();
+            $("#summonerInput").val(path.substring(1).split("/")[2]);
+        
+            suggestChamps();
+            break;
+        case /\/sets\/[^\/]+\/[^\/]+\/[^\/]+$/.test(path):
+            pathRegion(path);
+            collapse();
+            $("#set").append()
+            $("#summonerInput").val(path.substring(1).split("/")[2]);
+            
+            var reg = path.substring(1).split("/")[1]
+            var name = path.substring(1).split("/")[2]
+            var champ = path.substring(1).split("/")[3]
+            
+            $("#set").append('<img class="suggested animated champFocus" champion="'+champ+'" src="http://ddragon.leagueoflegends.com/cdn/6.11.1/img/champion/'+champ+'.png">')
+            
+            createSet(reg,name,champ);
+            break;
+    }
+});
+
+function pathRegion(path){
+    //CHECK IF REGION IS VALID
+    if (regions.indexOf(path.substring(1).split("/")[1])>-1){
+        var h = regions[regions.indexOf(path.match(/[^\/]+$/)[0])];
+        regions[regions.indexOf(path.substring(1).split("/")[1])] = regions[0];
+        regions[0] = path.substring(1).split("/")[1];
+    }else{
+        history.pushState(null,"League-Set","/sets")
+    }
+}
+
+function suggestChamps(){
+    		
+    var name = $("#summonerInput").val();
+    var region = regions[0];
+    
+    $.ajax({
+    type:"GET",
+    url:"/content/"+region+"/"+name,
+    dataType: "json",
+    complete: function(data){
+        console.log(data);
+        if(data.status==200){
+            
+            //HISTORY CHANGE
+            history.pushState(null,name+"'s Champions on League-Set","/sets/"+region+"/"+name);
+            
+            data = data.responseJSON;
+            $("#divider").append('<h2>Pick a Champion</h2><hr>')
+
+            //APPEND CHAMP PICTURES
+            for (i=0;i<data.suggested.length;i++){
+                $("#set").append('<img class="suggested animated champsIn" champion="'+data.suggested[i]+'" index="'+i+'" src="http://ddragon.leagueoflegends.com/cdn/6.11.1/img/champion/'+data.suggested[i]+'.png">');
+            }
+
+            alignFooter();	
+
+            $(".suggested").on("animationend",function(){
+                $(this).removeClass("champsIn");
+            })
+            
+            $(".suggested").one("click",function(){
+                $("h2").html("Win Games!");
+                $(".suggested").not(this).remove();
+                $(this).addClass("champFocus");
+                var champion = $(this).attr("champion")
+                createSet(region,name,champion);
+            })
+		
+
+
+        }else{
+            console.log(data.status)
+
+            switch(data.status){
+                case 404: 
+                    alert("user not found");
+                    break;
+                case 607:
+                    alert("user has no ranked games");
+                    break;
+                case 429:
+                    alert("too many requests. pls wait a few seconds");
+                    break;
+                case 400:
+                    $(".search").addClass("badRequest");
+                    $(".search").on("animationend",function(){
+                        $(this).removeClass("badRequest");
+                    });
+                    break;
+                case "error0":
+                    alert("gj you just crashed the FUCKING SERVER");
+                    break;
+                default:
+                    alert("error"+data.status);
+            }
+        }
+    }
+    })
+}
+
+function createSet(region,name,champion){
+
+		//GET ITEMSET
 		$.ajax({
-			type:"POST",
-			url:"/getData",
-			dataType: "json",
-			data: obj,
-			complete: function(data){
-				console.log(data);
-				if(data.status==200){
+			type:"GET",
+			url:"/content/"+region+"/"+name+"/"+champion,
+			dataType:"json",
+			complete:function(data){
+
+				if (data.status==200){
+                    
+                    history.pushState(null,name+"'s "+champion+"-Build on League-Set","/sets/"+region+"/"+name+"/"+champion);
+                    
 					data = data.responseJSON;
-					$("#divider").append('<h2>Pick a Champion</h2><hr>')
-				for (i=0;i<data.suggested.length;i++){
-					$("#set").append('<img class="suggested animated champsIn" champion="'+data.suggested[i].name+'" index="'+i+'" src="http://ddragon.leagueoflegends.com/cdn/6.11.1/img/champion/'+data.suggested[i].name+'.png">');
-				}
-				
-				alignFooter();	
-					
-				$(".suggested").on("animationend",function(){
-					$(this).removeClass("champsIn");
-				})
-				
-								
-					$(".suggested").one("click",function(){
-						$("h2").html("Win Games!");
-						$(".suggested").not(this).remove();
-						$(this).addClass("champFocus");
-						
-						var champion = $(this).attr("champion")
-						var sendThis = {
-							champion:champion,
-							matches:data.suggested[$(this).attr("index")],
-							name:data.name
-						}
-						
-						console.log(JSON.stringify(sendThis))
-						//GET ITEMSET
-						$.ajax({
-							type:"POST",
-							url:"/getSet",
-							dataType:"json",
-							data:sendThis,
-							complete:function(data){
+					itemset = data.itemset;
+					console.log(itemset);
+					fillCanvas(itemset);
+					giveDload(itemset,data.zipcode);
 
-								if (data.status==200){
-									data = data.responseJSON;
-									itemset = data.itemset;
-									console.log(itemset);
-									fillCanvas(itemset);
-									giveDload(itemset,data.zipcode);
-
-									$(".fusser").css("position","unset");
-									
-									var fac = 200; 
-									
-									for (i=0;i<fac;i+=1){
-										setTimeout(function(){window.scrollBy(0,$(window).height()/fac)},5*i);
-									}
-									
-								}else{
-									console.log(data.status);
-								}
-								
-							}
-						})
-					})
-//center Pictures (here)
-				}else{
-					console.log(data.status)
+					$(".fusser").css("position","unset");
 					
-					switch(data.status){
-						case 404: 
-							alert("user not found");
-							break;
-						case 607:
-							alert("user has no ranked games");
-							break;
-						case 429:
-							alert("too many requests. pls wait a few seconds");
-							break;
-						case 400:
-							$(".search").addClass("badRequest");
-							$(".search").on("animationend",function(){
-								$(this).removeClass("badRequest");
-							});
-							break;
-						default:
-							alert("error"+data.status);
+					var fac = 200; 
+					
+					for (i=0;i<fac;i+=1){
+						setTimeout(function(){window.scrollBy(0,$(window).height()/fac)},5*i);
 					}
+					
+				}else{
+					console.log(data.status);
 				}
+				
 			}
 		})
-	});
-});
+}
 
 function fillCanvas(data){
 	$("#set").append('<canvas id="myCanvas" class="itemset">Your Browser sucks</canvas>');
