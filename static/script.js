@@ -1,5 +1,9 @@
 var regions = ["euw","eune","br","jp","kr","lan","las","na","oce","ru","tr"];
 
+window.onpopstate = function(){
+	location.href = location.href;
+}
+
 function drawItem(row,column,itemId,width){
 	console.log("going to Fill Canvas")
 	var canvas = document.getElementById("myCanvas");
