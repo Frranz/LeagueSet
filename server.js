@@ -164,12 +164,15 @@ function prepareSet(req,res){
 	var reg = req.originalUrl.substring(1).split("/")[1];
 	var name = req.originalUrl.substring(1).split("/")[2];
 	var champion = req.originalUrl.substring(1).split("/")[3];
-
+	var amount = req.originalUrl.substring(1).split("/")[4];
+	
+	if(!amount) amount=10;
+	
 	console.log("einmal "+name+"'s "+ champion+" zum mitnehmen bitte");
 	
 	getSumId(reg,name,function(ret){
 		if (!ret.error){
-			urlMatchlist = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v2.2/matchlist/by-summoner/'+ret.id+'?championIds='+champIDs.byName[champion]+'&rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5&seasons=SEASON2016&beginIndex=0&endIndex=10&api_key='+api_key;
+			urlMatchlist = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v2.2/matchlist/by-summoner/'+ret.id+'?championIds='+champIDs.byName[champion]+'&rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5&seasons=SEASON2016&beginIndex=0&endIndex='+amount+'&api_key='+api_key;
 			riotApiQueue.push({url:urlMatchlist},function(returnObj){
 				if(returnObj.response.statusCode==200){
 				
@@ -322,7 +325,7 @@ riotApiQueue.push({url:urlMatch} ,function(returnObj){
 	}else{
 		console.log("stupid error"+JSON.stringify(returnObj))
 	}
-	if (gamesAn==10){
+	if (gamesAn==matches.length){
 
 		var startSorted=new Array();
 		var earlySorted=new Array();
