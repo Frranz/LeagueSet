@@ -2,15 +2,6 @@ http://www.w3schools.com/tags/tag_base.asp
 
 frames manchmal 0 events zb letzter frame 335463467 LAS
 
-https://developer.riotgames.com/api/methods#!/1079/3722
+check if region is valid #server
 
-sets.*\/.*\/.*
-
-
-download/whatever
-
-sets/region/player/champion
-
-https://euw.api.pvp.net/api/lol/euw/v2.2/matchlist/by-summoner/38366981?championIds=412&rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5&seasons=SEASON2016&beginIndex=0&endIndex=10&api_key=90a36411-d6a4-4ce3-978f-9f52afcebab8
-
-check if region is valid
+context menu on champion click für games averaged

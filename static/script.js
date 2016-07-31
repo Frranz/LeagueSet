@@ -105,7 +105,6 @@ $(document).ready(function(){
                 var reg = path.substring(1).split("/")[1];
                 var name = path.substring(1).split("/")[2];
                 var champ = path.substring(1).split("/")[3];
-                var amount = path.substring(1).split("/")[4];
                 
                 //FILL INPUT WITH PLAYERNAME
                 $("#summonerInput").val(name);
@@ -113,7 +112,7 @@ $(document).ready(function(){
                 //APPEND CHAMP PICTURE
                 $("#set").append('<img class="suggested animated champFocus" champion="'+champ+'" src="http://ddragon.leagueoflegends.com/cdn/6.11.1/img/champion/'+champ+'.png">')
 
-                createSet(reg,name,champ,amount);
+                createSet(reg,name,champ);
             }
             
         }else{
@@ -145,7 +144,7 @@ function suggestChamps(){
 
             //APPEND CHAMP PICTURES
             for (i=0;i<data.suggested.length;i++){
-                $("#set").append('<img class="suggested animated champsIn" champion="'+data.suggested[i]+'" index="'+i+'" src="http://ddragon.leagueoflegends.com/cdn/6.11.1/img/champion/'+data.suggested[i]+'.png">');
+                $("#set").append('<img class="suggested animated champsIn" champion="'+data.suggested[i]+'" src="http://ddragon.leagueoflegends.com/cdn/6.11.1/img/champion/'+data.suggested[i]+'.png">');
             }
 
             alignFooter();	
@@ -154,12 +153,51 @@ function suggestChamps(){
                 $(this).removeClass("champsIn");
             })
             
-            $(".suggested").one("click",function(){
-                $("h2").html("Win Games!");
-                $(".suggested").not(this).remove();
-                $(this).addClass("champFocus");
-                var champion = $(this).attr("champion")
-                createSet(region,name,champion);
+            $('body').contextmenu(function(e) {
+			    return false;
+			});
+            
+            $(".suggested").on("mousedown",function(e){
+            	
+            	var champion = $(this).attr("champion");
+            	var chaSel = $(this);
+            	
+                $("h2").html("eZ wins inc!");
+            	//OPEN AMOUNT-CHOOSER IF RIGHT-CLICK
+            	if(e.which==3){
+                	
+            		$("body").append('<ul class="selAmount"><li value="5">5</li><li value="10">10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✓</li><li value="15">15</li><li value="20">20</li></ul>');
+                	$(".selAmount").css({left:e.pageX+'px',top:e.pageY+'px'});
+            		
+                	$(".selAmount>*").hover(function(){
+                		$(this).animate({
+                			backgroundColor:"#3399ff",
+                			color:"white"
+                		},100);
+                	},function(){
+                		$(this).animate({
+                			backgroundColor:"white",
+                			color:"black"
+                		},100);
+                	})
+                	
+                	$(".selAmount>*").one("click",function(){
+                		
+                		var amount = $(this).val();
+                		
+                		$(".selAmount").remove();
+                		
+                        $(".suggested").not(chaSel).remove();
+                        
+                        $(chaSel).addClass("champFocus");
+                        
+                        createSet(region,name,champion,amount);
+                	})
+            	}else{
+                    $(".suggested").not(chaSel).remove();
+                    $(chaSel).addClass("champFocus");
+                    createSet(region,name,champion);
+            	}
             })
 		
 

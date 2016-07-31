@@ -140,6 +140,18 @@ hr{
 	cursor:pointer;
 }
 
+.selAmount{
+	position:absolute;
+	list-style:none;
+	background-color:white;
+	width:auto; 
+}
+
+.selAmount>*{
+	border:1px solid black;
+	cursor:pointer;
+}
+
 .itemset{
 	float:right;
 	background-image:url(images/itemset.png);
