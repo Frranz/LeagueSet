@@ -2,10 +2,6 @@ http://www.w3schools.com/tags/tag_base.asp
 
 frames manchmal 0 events zb letzter frame 335463467 LAS
 
-check if region is valid #server
+help ding oben rechts
 
-context menu on champion click für games averaged
-
-no response if error @ matchlsit
-
-z.45
+C:\Users\Franz\Pictures\app\add help.png
