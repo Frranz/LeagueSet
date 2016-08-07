@@ -5,3 +5,7 @@ frames manchmal 0 events zb letzter frame 335463467 LAS
 check if region is valid #server
 
 context menu on champion click für games averaged
+
+no response if error @ matchlsit
+
+z.45

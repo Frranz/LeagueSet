@@ -7,7 +7,14 @@ window.onpopstate = function(){
 var regions = ["euw","eune","br","jp","kr","lan","las","na","oce","ru","tr"];
 
 $(document).ready(function(){
-	//PRETEND RESIZE
+	
+	if(localStorage.reg){
+		regions[regions.indexOf(localStorage.reg)] = regions[0];
+		regions[0] = localStorage.reg;
+	}
+
+	
+	//PRETEND RESIZE - FOR PLACEHOLDER REFRESH
 	$(window).resize();
 	
 	//COLOR ON HOVER
@@ -39,30 +46,37 @@ $(document).ready(function(){
 	// FIX INPUT HEIGHT
 	$(".search").css("height",$(".search").height()+"px")
 	
-	//REGION COLLAPSE
-    
-		// HANDLER FUNCTIONS
-        function ellapse(){
-            for (i=1;i<regions.length;i++){
-                $(".regList").append('<li valuel="'+regions[i]+'">'+regions[i].toUpperCase()+'</li>');
-            }
-            console.log(i)
-            $('li').one('click',function(){
-                var ind = $(this).index();
-                var h = regions[ind];
-                regions[ind] = regions[0];
-                regions[0] = h;
-                collapse();
-            })
-        }
+	//CHOOSE REGION	
+	$('.regList>*').one('click',ellapse);
 
-        function collapse(){
-            console.log("j")
-            $(".regList").html('<li value="'+regions[0]+'">'+regions[0].toUpperCase()+'</li>')
-            $("li").one("click",ellapse);
-        }
+    function ellapse(){
 	
-	$('li').one('click',ellapse);
+		for (i=1;i<regions.length;i++){
+            $(".regList").append('<li valuel="'+regions[i]+'">'+regions[i].toUpperCase()+'</li>');
+        }
+        
+        setTimeout(function(){
+        	$("body").one("click",function(e){
+        	
+	        	// WENN OPTION HITTET
+	        	if(e.target.parentElement.className=="regList"){
+	        		var ind = $(e.target).index();
+	        		var h = regions[ind];
+	        		regions[ind] = regions[0];
+	        		regions[0] = h;
+	        		localStorage.reg = regions[0];
+	        	}
+	        	
+				collapse();	
+	        })
+        },1)
+    }
+
+    function collapse(){
+        console.log("j")
+        $(".regList").html('<li value="'+regions[0]+'">'+regions[0].toUpperCase()+'</li>')
+        $("li").one("click",ellapse);
+    }
     
 	$("#summonerSubmit").submit(function(e){
 		e.preventDefault();
@@ -181,21 +195,23 @@ function suggestChamps(){
                 		},100);
                 	})
                 	
-                	$(".selAmount>*").one("click",function(){
+                	$("body").one("click",function(e){
                 		
-                		var amount = $(this).val();
+                		//WENN EL IN SELAMOUNT
+                		if (e.target.parentElement.getAttribute("class")=="selAmount"){
+                			
+                			var amount = e.target.value;
+                			
+                			$(".suggested").not(chaSel).remove();
+                			
+                			createSet(region,name,champion,amount)
+                		}
                 		
                 		$(".selAmount").remove();
-                		
-                        $(".suggested").not(chaSel).remove();
-                        
-                        $(chaSel).addClass("champFocus");
-                        
-                        createSet(region,name,champion,amount);
+                	
                 	})
             	}else{
                     $(".suggested").not(chaSel).remove();
-                    $(chaSel).addClass("champFocus");
                     createSet(region,name,champion);
             	}
             })
@@ -235,6 +251,14 @@ function suggestChamps(){
 //GET ITEMSET
 function createSet(region,name,champion,amount){
 	
+		$("img").addClass("champFocus");
+	
+		for (j=0;j<5;j+=1){
+			setTimeout(function(){
+				alignFooter();
+			},200*j);
+		}
+	
 		var setUrl = "/content/"+region+"/"+name+"/"+champion;
 		setUrl += (amount)?"/"+amount:"";
 	
@@ -258,7 +282,11 @@ function createSet(region,name,champion,amount){
 					data = data.responseJSON;
 					itemset = data.itemset;
 					console.log(itemset);
+
+					$("#set").append('<canvas id="myCanvas" class="itemset">Your Browser sucks</canvas>');
+					
 					fillCanvas(itemset);
+					
 					giveDload(itemset,data.zipcode);
 
 					$(".fusser").css("position","unset");
@@ -281,7 +309,6 @@ function createSet(region,name,champion,amount){
 
 function fillCanvas(data){
     //CREATE CANVAS
-	$("#set").append('<canvas id="myCanvas" class="itemset">Your Browser sucks</canvas>');
 	var canvas = document.getElementById("myCanvas");
 	var ctx = canvas.getContext("2d");
 	sizeCanvas();

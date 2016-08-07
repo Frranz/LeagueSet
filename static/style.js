@@ -10,6 +10,7 @@ $(window).resize(function(){
 	
     try{
 		sizeCanvas();
+		fillCanvas(itemset);
 	}catch(e){} 
 });
 
