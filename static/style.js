@@ -1,3 +1,36 @@
+$(window).ready(function(){
+	
+	//PRETEND RESIZE - FOR PLACEHOLDER REFRESH
+	$(window).resize();
+	
+	//COLOR ON HOVER
+	$(".search").hover(function(){
+		$("#iconSearch").animate({
+			color: '#9C27B0'
+		}, 200);
+		$(".search").animate({
+			borderBottomColor: '#9C27B0'
+		}, 200);
+		$(".region").animate({
+			color:'#F9A825'
+		},500)
+	}, function(){
+		$("#iconSearch").animate({
+			color: '#c9c9c9'
+		}, 200);
+		$(".search").animate({
+			borderBottomColor: '#c9c9c9'
+		}, 200);
+		$(".region").animate({
+			color:'#c9c9c9'
+		},200)
+	});
+	
+	// FIX INPUT HEIGHT
+	$(".search").css("height",$(".search").height()+"px")
+	
+});
+
 $(window).resize(function(){
     
 	if($(window).width()<435){

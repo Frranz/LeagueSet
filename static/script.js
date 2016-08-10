@@ -12,40 +12,10 @@ $(document).ready(function(){
 		regions[regions.indexOf(localStorage.reg)] = regions[0];
 		regions[0] = localStorage.reg;
 	}
-
-	
-	//PRETEND RESIZE - FOR PLACEHOLDER REFRESH
-	$(window).resize();
-	
-	//COLOR ON HOVER
-	$(".search").hover(function(){
-		$("#iconSearch").animate({
-			color: '#9C27B0'
-		}, 200);
-		$(".search").animate({
-			borderBottomColor: '#9C27B0'
-		}, 200);
-		$(".region").animate({
-			color:'#F9A825'
-		},500)
-	}, function(){
-		$("#iconSearch").animate({
-			color: '#c9c9c9'
-		}, 200);
-		$(".search").animate({
-			borderBottomColor: '#c9c9c9'
-		}, 200);
-		$(".region").animate({
-			color:'#c9c9c9'
-		},200)
-	});
 	
 	// FILL REGIONLIST
 	$(".regList").html('<li valuel="'+regions[0]+'">'+regions[0].toUpperCase()+'</li>');
-	
-	// FIX INPUT HEIGHT
-	$(".search").css("height",$(".search").height()+"px")
-	
+		
 	//CHOOSE REGION	
 	$('.regList>*').one('click',ellapse);
 
