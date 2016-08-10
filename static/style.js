@@ -27,7 +27,9 @@ $(window).ready(function(){
 	});
 	
 	// FIX INPUT HEIGHT
-	$(".search").css("height",$(".search").height()+"px")
+	setTimeout(function(){
+		$(".search").css("height",$(".search").height()+"px");
+	},20)
 	
 });
 
