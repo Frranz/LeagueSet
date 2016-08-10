@@ -30,7 +30,7 @@ app.use('/riot.txt',function(req,res){
 	res.sendFile(__dirname+"/static/riot.txt")
 })
 
-app.get(/\/$|\/sets.*/, function (req, res) {
+app.get(/^\/$|\/sets.*/, function (req, res) {
 	console.log(req.originalUrl)
 	res.sendFile(path.join(__dirname + '/index.html'));
 });
@@ -50,8 +50,9 @@ app.get(/\/content\/[^\/]+\/[^\/]+$/, function(req,res){
 		// wenn kein error
 		if(!ret.error){
 			console.log("Summoner ID = " + id);
-			urlMatches = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v1.3/stats/by-summoner/'+id+'/ranked?season=SEASON2016&api_key='+api_key;
-			riotApiQueue.push({url:urlMatches} ,function(returnObj){
+			urlMatches = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v1.3/stats/by-summoner/'+id+'/ranked?season=SEASON2016&api_key=';
+						
+			riotApiQueue.push(urlMatches ,function(returnObj){
 				
 				if (returnObj.response.statusCode==200){
 					data = JSON.parse(returnObj.body);
@@ -94,51 +95,60 @@ app.listen(port, function () {
 
 // MANAGE API REQUESTS
 const api_key = 'RGAPI-A784BBB0-5BA3-4164-9521-4E8D5D58697C';
-const numberCallsCalls = 3000;
-const timeCalls = 10000;
-var currentCalls = 0;
-var queueLength = 0;
 
-/**
- * Interval for 10s API limit
- */
-setInterval(function() {
-	currentCalls = 0;
-	riotApiQueue.resume();
-}, timeCalls);
+var riotApiQueue = new Queue(api_key);
 
-/**
- * Worker queue, processing API requests
- */
-var riotApiQueue = async.queue(function(task,next){
-	currentCalls++;
+function Queue(api_key){
+	
+	this.api_key = api_key;
+	
+	this.pause = false;
+	
+	var diese = this;
+	
+	this.push = function(url,callback){
 		
-	/** Processing */
-	getData(task.url, function(data){
-		next(data);
-	});
-	
-	/** Stopping if API limit is reached */
-	if(currentCalls==numberCallsCalls){
-		riotApiQueue.pause();
-	}
-	
-}, 10);
+		var options = {
+				url:url+api_key,
+				timeout:5000,
+				agent:false
+		};
+		
+        if(!diese.pause){
+            
+            request(options,function(error,response,body){
+            	
+                if(response.statusCode!=429){
+                	callback({error:error, response:response, body:body});
 
-/**
- * Function that requests Data
- * @param url - Url to query
- * @param callback - callback
- */
-function getData(url, callback){
-	var options = {
-			url:url,
-			timeout: 5000,
-			agent: false
-	};
-	request(options,function(error,response,body){
-		callback({error:error, response:response, body:body});
-	})
+                }else{
+                	
+                	console.log("2 much");
+                	
+                    if (response.headers["retry-after"]){
+
+                        diese.pause=true;
+                        
+                        setTimeout(function(){
+
+                            diese.pause=false;
+                            diese.push(url,callback);
+
+                        }, response.headers["retry-after"]*1000);
+                    }else{
+                    	diese.push(url,callback);
+                    }
+                }
+            });
+        }else{
+            
+            setTimeout(function(){
+                diese.push(url,callback);
+                console.log("wait for queue")
+            },200);
+            
+        }
+	}
 }
 
 // Functions
@@ -172,8 +182,8 @@ function prepareSet(req,res){
 	
 	getSumId(reg,name,function(ret){
 		if (!ret.error){
-			urlMatchlist = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v2.2/matchlist/by-summoner/'+ret.id+'?championIds='+champIDs.byName[champion]+'&rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5&seasons=SEASON2016&beginIndex=0&endIndex='+amount+'&api_key='+api_key;
-			riotApiQueue.push({url:urlMatchlist},function(returnObj){
+			urlMatchlist = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v2.2/matchlist/by-summoner/'+ret.id+'?championIds='+champIDs.byName[champion]+'&rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5&seasons=SEASON2016&beginIndex=0&endIndex='+amount+'&api_key=';
+			riotApiQueue.push(urlMatchlist,function(returnObj){
 				if(returnObj.response.statusCode==200){
 				
 					data = JSON.parse(returnObj.body);
@@ -214,8 +224,8 @@ function createSet(matches,champion,name,res){
 var gamesAn = 0;
 for (k=0;k<matches.length;k+=1){
 var reg = matches[k].reg
-urlMatch = 'https://'+reg.toLowerCase()+'.api.pvp.net/api/lol/'+reg.toLowerCase()+'/v2.2/match/'+matches[k].id+'?includeTimeline=true&api_key='+api_key;
-riotApiQueue.push({url:urlMatch} ,function(returnObj){
+urlMatch = 'https://'+reg.toLowerCase()+'.api.pvp.net/api/lol/'+reg.toLowerCase()+'/v2.2/match/'+matches[k].id+'?includeTimeline=true&api_key=';
+riotApiQueue.push(urlMatch ,function(returnObj){
 	gamesAn +=1;
 	if (returnObj.response!=undefined){
 	if (returnObj.response.statusCode==200){
@@ -319,8 +329,6 @@ riotApiQueue.push({url:urlMatch} ,function(returnObj){
         }
 		}else{
 			console.log("error ev: "+returnObj.response.statusCode);
-			console.log(returnObj.response.request.uri.href);
-			console.log(returnObj.response.headers["x-rate-limit-count"]);
 		}
 	}else{
 		console.log("stupid error"+JSON.stringify(returnObj))
@@ -431,8 +439,11 @@ riotApiQueue.push({url:urlMatch} ,function(returnObj){
 
 function getSumId(reg,name,next){
 	
-	urlSumId = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v1.4/summoner/by-name/' + name + '?api_key=' + api_key;
-	riotApiQueue.push({url:urlSumId}, function(returnObj){
+	urlSumId = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v1.4/summoner/by-name/' + name + '?api_key=';
+	
+	console.log(urlSumId);
+	
+	riotApiQueue.push(urlSumId, function(returnObj){
 		if (returnObj.response!=undefined){
 			if (returnObj.response.statusCode==200){
 				data = JSON.parse(returnObj.body);
