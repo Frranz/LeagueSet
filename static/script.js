@@ -259,7 +259,7 @@ function createSet(region,name,champion,amount){
 					
 					giveDload(itemset,data.zipcode);
 
-					$(".fusser").css("position","unset");
+					$(".fusser").css("position","relative");
 					
                     
                     //SCROLL ANIMATION
