@@ -69,12 +69,10 @@ function sizeCanvas(){
 	}
 	if ($(window).width()<=$(window).height()){
 		canvas.width = $(window).width()*0.4;
-		canvas.height = $(window).width()*0.6;	
-		console.log("höher als breit");	
+		canvas.height = $(window).width()*0.6;
 	}else{
 		canvas.width = $(window).height()*0.5222;
-		canvas.height = $(window).height()*0.8;
-		console.log("breiter als hoch");		
+		canvas.height = $(window).height()*0.8;	
 	}
 	$("#myCanvas").css("margin-right",$(window).width()/4 - $("#myCanvas").width()/2);
 }

@@ -1,9 +1,7 @@
-http://www.w3schools.com/tags/tag_base.asp
-
 frames manchmal 0 events zb letzter frame 335463467 LAS
 
 help ding oben rechts
 
 C:\Users\Franz\Pictures\app\add help.png
 
-400 when no input (bis jetzt immer 404)
+400 when no input (bis jetzt immer 404)dk //test pls

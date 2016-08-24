@@ -39,7 +39,7 @@ app.get('/google1effa2b7f9a7e0a5.html', function (req, res) {
 	res.sendFile(path.join(__dirname + '/google1effa2b7f9a7e0a5.html'));
 });
 // MAIN HANDLER
-app.get(/\/content\/[^\/]+\/[^\/]+$/, function(req,res){
+app.get(/\/content\/[^\/]+\/[^\/]*$/, function(req,res){
 	
 	var reg = req.originalUrl.substring(1).split("/")[1];
 	var name = req.originalUrl.substring(1).split("/")[2];
@@ -83,14 +83,15 @@ app.get(/\/content\/[^\/]+\/[^\/]+$/, function(req,res){
 	})
 });
 
-app.get(/\/content\/[^\/]+\/[^\/]+\/[^\/]+/,function(req,res){
+app.get(/\/content\/[^\/]+\/[^\/]+\/[^\/]+\/?[^\/]*$/,function(req,res){
 		prepareSet(req,res);
 })
 
 
 const port = Number(process.env.PORT||3000)
 app.listen(port, function () {
-  console.log('Listening on '+port);
+  console.log('ich hoeree...');
+  console.log(process.env.PORT);
 });
 
 // MANAGE API REQUESTS
@@ -117,28 +118,31 @@ function Queue(api_key){
         if(!diese.pause){
             
             request(options,function(error,response,body){
-            	
-                if(response.statusCode!=429){
-                	callback({error:error, response:response, body:body});
-
-                }else{
-                	
-                	console.log("2 much");
-                	
-                    if (response.headers["retry-after"]){
-
-                        diese.pause=true;
-                        
-                        setTimeout(function(){
-
-                            diese.pause=false;
-                            diese.push(url,callback);
-
-                        }, response.headers["retry-after"]*1000);
-                    }else{
-                    	diese.push(url,callback);
-                    }
-                }
+            	if (response){
+	                if(response.statusCode!=429){
+	                	callback({error:error, response:response, body:body});
+	
+	                }else{
+	                	
+	                	console.log("2 much");
+	                	
+	                    if (response.headers["retry-after"]){
+	
+	                        diese.pause=true;
+	                        
+	                        setTimeout(function(){
+	
+	                            diese.pause=false;
+	                            diese.push(url,callback);
+	
+	                        }, response.headers["retry-after"]*1000);
+	                    }else{
+	                    	diese.push(url,callback);
+	                    }
+	                }
+            	}else{
+            		diese.push(url,callback);
+            	}
             });
         }else{
             
@@ -170,6 +174,8 @@ function possibleSets(data,name,done){
 }
 
 function prepareSet(req,res){
+	
+//	var [asdf,reg,name,champion,amount] = req.originalUrl.substring(1).split("/");
 	
 	var reg = req.originalUrl.substring(1).split("/")[1];
 	var name = req.originalUrl.substring(1).split("/")[2];
@@ -323,7 +329,7 @@ riotApiQueue.push(urlMatch ,function(returnObj){
         		}
         	}
         }
-        //CHECK IF LAST RUN
+        
 		}else{
 			console.log("no timeline");
         }
@@ -352,6 +358,8 @@ riotApiQueue.push(urlMatch ,function(returnObj){
 		startSorted = Object.keys(items.start).sort(function(a,b){return -items.start[a].used+items.start[b].used});
 		earlySorted = Object.keys(items.earlyB).sort(function(a,b){return -items.earlyB[a].used+items.earlyB[b].used});
 		finSorted = Object.keys(items.finItems).sort(function(a,b){return -items.finItems[a]+items.finItems[b]});
+		
+		console.log(JSON.stringify(items));
 		
 		// PREPARE SETS
 		var itemSet={

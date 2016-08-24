@@ -271,6 +271,7 @@ function createSet(region,name,champion,amount){
 					
 				}else{
 					console.log(data.status);
+					alert("error"+data.status);
 				}
 				
 			}
@@ -284,8 +285,8 @@ function fillCanvas(data){
 	sizeCanvas();
 	width = $("#myCanvas").width();
 	for (block in data.blocks){
-		for (item in data.blocks[block].items){
-			drawItem(block,item,data.blocks[block].items[item].id,width)
+		for (items in data.blocks[block].items){
+			drawItem(block,items,data.blocks[block].items[items].id,width)
 		}
 
 	}
@@ -298,16 +299,15 @@ function drawItem(row,column,itemId,width){
 	var newImg = new Image();
 	newImg.src = 'http://ddragon.leagueoflegends.com/cdn/6.11.1/img/item/'+itemId+'.png';
 	newImg.onload = function(){
-		console.log(row+"|"+column+"itemId")
 		ctx.drawImage(newImg,width*0.05+((column)*0.14*width),0.17*width+(row*0.25*width),0.1*width,0.1*width);
 	}
 }
 
 function giveDload(data,fileNum){
     
-	var howFast = 'Open the ZIP Archive with your extracter of choice. Then copy the League Of Legends folder in your Riot Games installation folder <b>NEXT TO</b> the existing LoL Folder.'
+	var howFast = 'Open the ZIP Archive with your extracter of choice. Then drag the downloaded League Of Legends folder in the Riot Games directory on your PC (most often your C drive) <b>NEXT TO</b> the already existing LoL Folder.'
     
-	var howSlow = 'Click the copy button. Open Riot Games &rarr;LeagueOfLegends &rarr;config &rarr;Champions &rarr;*Champion* &rarr; Recommended. There you have to create a JSON file.(right click <b>&rarr;</b> new <b>&rarr;</b> textfile <b>&rarr;</b> paste the copied string and save as something.json).'
+	var howSlow = 'Click the copy button. Open the Riot Games directory on your PC (most often on your C drive) &rarr;LeagueOfLegends &rarr;config &rarr;Champions &rarr;*Champion* &rarr; Recommended. There you have to create a JSON file.(right click <b>&rarr;</b> new <b>&rarr;</b> textfile <b>&rarr;</b> paste the copied string and save as something.json).'
     
 	var content = '<p class="setOption" id="dLoad">Download → Pasta</p><p class="setOption" id="copy">Copy→*a lot of steps*→ Pasta</p><button id="downloadSet">Download</button><textarea readonly wrap="off" id="itemSetString">'+JSON.stringify(data,null,"\t")+'</textarea><button id="copyText">Copy</button><p id="where">Where should I put these things</p><p class="dLoadHow"style="clear:left">'+howFast+'</p><p class="dLoadHow">'+howSlow+'</p>'
     
