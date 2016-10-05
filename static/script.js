@@ -1,4 +1,4 @@
-
+﻿
 //REFRESH PAGE
 window.onpopstate = function(){
 	location.reload();
@@ -147,7 +147,7 @@ function suggestChamps(){
             	var chaSel = $(this);
             	
                 $("h2").html("eZ wins inc!");
-            	//OPEN AMOUNT-CHOOSER IF RIGHT-CLICK
+            	//OPEN AMOUNT-selector IF RIGHT-CLICK
             	if(e.which==3){
                 	
             		$("body").append('<ul class="selAmount"><li value="5">5</li><li value="10">10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✓</li><li value="15">15</li><li value="20">20</li></ul>');
@@ -230,11 +230,12 @@ function createSet(region,name,champion,amount){
 		}
 	
 		var setUrl = "/content/"+region+"/"+name+"/"+champion;
-		setUrl += (amount)?"/"+amount:"";
+		
+//setUrl += (amount)?"/"+amount:"";
 	
 		if (amount){
-			setUrl+="/"+amount;
 			amount = "/"+amount;
+			setUrl+=amount;
 		}else{
 			amount = "";
 		}
