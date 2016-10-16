@@ -146,7 +146,7 @@ function suggestChamps(){
             	var champion = $(this).attr("champion");
             	var chaSel = $(this);
             	
-                $("h2").html("eZ wins inc!");
+                $("h2").html("gl hf!");
             	//OPEN AMOUNT-selector IF RIGHT-CLICK
             	if(e.which==3){
                 	
@@ -310,7 +310,7 @@ function giveDload(data,fileNum){
     
 	var howSlow = 'Click the copy button. Open the Riot Games directory on your PC (most often on your C drive) &rarr;LeagueOfLegends &rarr;config &rarr;Champions &rarr;*Champion* &rarr; Recommended. There you have to create a JSON file.(right click <b>&rarr;</b> new <b>&rarr;</b> textfile <b>&rarr;</b> paste the copied string and save as something.json).'
     
-	var content = '<p class="setOption" id="dLoad">Download → Pasta</p><p class="setOption" id="copy">Copy→*a lot of steps*→ Pasta</p><button id="downloadSet">Download</button><textarea readonly wrap="off" id="itemSetString">'+JSON.stringify(data,null,"\t")+'</textarea><button id="copyText">Copy</button><p id="where">Where should I put these things</p><p class="dLoadHow"style="clear:left">'+howFast+'</p><p class="dLoadHow">'+howSlow+'</p>'
+	var content = '<p class="setOption" id="dLoad">Download → win</p><p class="setOption" id="copy">Copy→*a lot of steps*→ win</p><button id="downloadSet">Download</button><textarea readonly wrap="off" id="itemSetString">'+JSON.stringify(data,null,"\t")+'</textarea><button id="copyText">Copy</button><p id="where">Where should I put these things</p><p class="dLoadHow"style="clear:left">'+howFast+'</p><p class="dLoadHow">'+howSlow+'</p>'
     
 	$("#set").append('<div class="download">'+content+'</div>');
     
