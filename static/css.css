@@ -168,7 +168,7 @@ hr{
 	clear:left;
 	float:left;
 	margin:2.5vw;
-	background-color:#266d99;
+	background-color:rgba(38, 91, 153, 0.53);
 }
 
 #where{
@@ -189,7 +189,7 @@ hr{
 	float:left;
 	border-radius:2vh;
 	border:1px solid black;
-	background-color:darkgreen;
+	background-color:rgba(0, 100, 76, 0.89);
 }
 
 #itemSetString{
