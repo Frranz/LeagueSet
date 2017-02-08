@@ -169,6 +169,8 @@ hr{
 	float:left;
 	margin:2.5vw;
 	background-color:rgba(38, 91, 153, 0.53);
+	padding-bottom:0.5vw;
+	padding-top:0.5vw;
 }
 
 #where{
