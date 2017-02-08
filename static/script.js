@@ -308,11 +308,7 @@ function giveDload(data,fileNum){
     
 	var howFast = 'Open the ZIP archive and drag the League of Legends Folder in it next to the existing League of Legends Folder in your Riot Games directory.'
     
-	var howSlow = 'Copy the text above
-Go to C:/Riot Games/League of Legends/config /Champions/Your Champion/Recommended
-rightclick>new>textfile
-paste the copied text
-save as something.json'
+	var howSlow = 'Copy the text above <br>Go to C:/Riot Games/League of Legends/config /Champions/Your Champion/Recommended<br>rightclick>new>textfile<br>paste the copied text<br>save as something.json'
     
 	var content = '<p class="setOption" id="dLoad">Download → win</p><p class="setOption" id="copy">Copy→*a lot of steps*→ win</p><button id="downloadSet">Download</button><textarea readonly wrap="off" id="itemSetString">'+JSON.stringify(data,null,"\t")+'</textarea><button id="copyText">Copy</button><p id="where">Where should I put these things</p><p class="dLoadHow"style="clear:left">'+howFast+'</p><p class="dLoadHow">'+howSlow+'</p>'
     

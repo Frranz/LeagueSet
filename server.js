@@ -191,11 +191,9 @@ function prepareSet(req,res){
 			urlMatchlist = 'https://'+reg+'.api.pvp.net/api/lol/'+reg+'/v2.2/matchlist/by-summoner/'+ret.id+'?championIds='+champIDs.byName[champion]+'&rankedQueues=TEAM_BUILDER_DRAFT_RANKED_5x5&seasons=SEASON2016&beginIndex=0&endIndex='+amount+'&api_key=';
 			riotApiQueue.push(urlMatchlist,function(returnObj){
 				if(returnObj.response.statusCode==200){
-				
 					data = JSON.parse(returnObj.body);
-					
+						
 					var matches = new Array();
-					
 					for(i=0;i<data.matches.length;i+=1){
 						matches.push({id:data.matches[i].matchId,reg:data.matches[i].region});
 					}
@@ -253,8 +251,12 @@ riotApiQueue.push(urlMatch ,function(returnObj){
 
         for (i=0;i<data.timeline.frames[1].events.length;i++){
             if (data.timeline.frames[1].events[i].participantId==pID && data.timeline.frames[1].events[i].eventType=="ITEM_PURCHASED"){
-            	if(startSet.indexOf(itemData.data[data.timeline.frames[1].events[i].itemId].name)==-1){
-            		startSet.push(itemData.data[data.timeline.frames[1].events[i].itemId].name);
+            	if(itemData.data[data.timeline.frames[1].events[i].itemId]!=undefined){
+                	if(startSet.indexOf(itemData.data[data.timeline.frames[1].events[i].itemId].name)==-1){
+                		startSet.push(itemData.data[data.timeline.frames[1].events[i].itemId].name);
+                	}	
+            	}else{
+            		console.log("old item found");
             	}
             }
         }
