@@ -190,6 +190,7 @@ hr{
 	border-radius:2vh;
 	border:1px solid black;
 	background-color:rgba(0, 100, 76, 0.89);
+	font-size:medium;
 }
 
 #itemSetString{
