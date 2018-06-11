@@ -95,7 +95,7 @@ app.listen(port, function () {
 });
 
 // MANAGE API REQUESTS
-const api_key = 'RGAPI-A784BBB0-5BA3-4164-9521-4E8D5D58697C';
+const api_key = '';
 
 var riotApiQueue = new Queue(api_key);
 
